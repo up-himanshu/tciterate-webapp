@@ -1,3 +1,3 @@
 export default {
-  ProductName: "eZunction",
+	ProductName: 'TCIterate'
 };

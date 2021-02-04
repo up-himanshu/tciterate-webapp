@@ -135,18 +135,18 @@ class AddEditUser extends React.Component {
 		this.setState({ loading: true });
 		// const { firstName, lastName } = this.state;
 		// console.log(this.state);
-		APIService.addUser(this.state).then(
+		APIService.addProject({ name: this.state.name }).then(
 			(unit) => {
 				this.setState({
 					success: true,
 					loading: false,
 					redirect: true,
-					redirectPath: '/users',
+					redirectPath: '/projects',
 					redirectData: {
 						visible: true,
 						alertStyle: 'success',
 						alertIcon: 'fa fa-check mx-2',
-						alertMessage: 'User added successfully.'
+						alertMessage: 'Project added successfully.'
 					}
 				});
 			},
@@ -229,33 +229,20 @@ class AddEditUser extends React.Component {
 			<Form onSubmit={this.state.update ? this._handleSubmitUpdate : this._handleSubmitAdd}>
 				<Row form>
 					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
-						<label htmlFor="feEmail">Email</label>
+						<label htmlFor="feName">Name</label>
 						<FormInput
-							id="feEmail"
-							type="email"
-							placeholder="Email"
-							name="email"
+							id="feName"
+							type="text"
+							placeholder="Project Name"
+							name="name"
 							onChange={(e) => {
-								this.setState({ email: e.target.value });
-								this.value = this.state.email;
+								this.setState({ name: e.target.value });
+								this.value = this.state.name;
 							}}
-							value={this.state.email}
+							value={this.state.name}
 						/>
 					</Col>
-					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
-						<label htmlFor="fePassword">Password</label>
-						<FormInput
-							id="fePassword"
-							type="password"
-							placeholder="Password"
-							name="password"
-							onChange={(e) => {
-								this.setState({ password: e.target.value });
-								this.value = this.state.password;
-							}}
-							value={this.state.password}
-						/>
-					</Col>
+					<Col md={{ size: 6, order: 6 }} className="form-group p-3"></Col>
 				</Row>
 
 				<Row form>

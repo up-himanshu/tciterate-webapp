@@ -6,12 +6,12 @@ import {
 	Card,
 	// CardHeader,
 	CardBody,
+	FormTextarea,
 	Button,
 	// ButtonGroup,
 	Form,
 	FormInput,
-	Alert,
-	FormSelect
+	Alert
 } from 'shards-react';
 // import PageTitle from '../../components/common/PageTitle';
 import MainTitle from '../../components/common/MainTitle';
@@ -22,7 +22,7 @@ import { Redirect } from 'react-router-dom';
 import { APIService } from '../../utils/APIService';
 import userLoginStatus from '../../utils/userLoginStatus';
 
-class AddEditProvider extends React.Component {
+class AddEditUser extends React.Component {
 	constructor(props) {
 		super(props);
 		// console.log('props in constructor ', props);
@@ -34,6 +34,7 @@ class AddEditProvider extends React.Component {
 			listItems: false,
 			internetConnected: true,
 			visible: false,
+			project_id: this.props.match.params.project_id,
 			first_name: this.props.location.state ? this.props.location.state.first_name : '',
 			last_name: this.props.location.state ? this.props.location.state.last_name : '',
 			email: this.props.location.state ? this.props.location.state.email : '',
@@ -47,15 +48,15 @@ class AddEditProvider extends React.Component {
 			zip_code: this.props.location.state ? this.props.location.state.zip_code : '',
 			address_1: this.props.location.state ? this.props.location.state.address_1 : '',
 			profile_photo: this.props.location.state ? this.props.location.state.profile_photo : '',
+			role_type: this.props.location.state ? this.props.location.state.role_type : '',
 			profile_change: false,
 			countries: [],
 			states: [],
 			cities: []
 		};
-		// console.log(this.state);
+		console.log(this.state);
+		this._handleChange = this._handleChange.bind(this);
 
-		this._handleFirstChange = this._handleFirstChange.bind(this);
-		this._handleLastChange = this._handleLastChange.bind(this);
 		this._handleSubmitAdd = this._handleSubmitAdd.bind(this);
 		this._handleSubmitUpdate = this._handleSubmitUpdate.bind(this);
 		this._handleChangeCountry = this._handleChangeCountry.bind(this);
@@ -69,12 +70,6 @@ class AddEditProvider extends React.Component {
 		if (this.state.loginStatus === undefined) {
 			userLoginStatus().then(
 				(value) => {
-					this._fetchCountryData();
-
-					if (this.state.update) {
-						this._fetchStateData();
-						this._fetchCityData();
-					}
 					this.setState({
 						loginStatus: true,
 						loading: false
@@ -86,18 +81,6 @@ class AddEditProvider extends React.Component {
 			);
 		}
 	}
-
-	_fetchCountryData = () => {
-		APIService.fetchCountry().then(
-			(units) => {
-				// console.log(units);
-				this.setState({
-					countries: units
-				});
-			},
-			(error) => this.setState({ internetConnected: false })
-		);
-	};
 
 	_fetchStateData = () => {
 		const { country } = this.state;
@@ -122,20 +105,9 @@ class AddEditProvider extends React.Component {
 		);
 	};
 
-	// _handleChange(e) {
-	// 	const { name, value } = e.target;
-	// 	this.setState({ [name]: value });
-	// }
-	_handleFirstChange(e) {
-		const { firstName, value } = e.target;
-
-		this.setState({ [firstName]: value });
-		// console.log(e.target.value);
-	}
-	_handleLastChange(e) {
-		const { lastName, value } = e.target;
-		this.setState({ [lastName]: value });
-		// console.log(lastName);
+	_handleChange(e) {
+		const { name, value } = e.target;
+		this.setState({ [name]: value });
 	}
 
 	async _handleChangeCountry(e) {
@@ -164,24 +136,23 @@ class AddEditProvider extends React.Component {
 		e.preventDefault();
 		this.setState({ loading: true });
 		// const { firstName, lastName } = this.state;
-		// console.log(this.state);
-		APIService.addProvider(this.state).then(
+		console.log('this.state.project_id', this.state.project_id);
+		APIService.addProjectTestCase(this.state.project_id, this.state).then(
 			(unit) => {
 				this.setState({
 					success: true,
 					loading: false,
 					redirect: true,
-					redirectPath: '/providers',
+					redirectPath: '/projects/' + this.state.project_id + '/testcases',
 					redirectData: {
 						visible: true,
 						alertStyle: 'success',
 						alertIcon: 'fa fa-check mx-2',
-						alertMessage: 'Provider added successfully.'
+						alertMessage: 'Test Case added successfully.'
 					}
 				});
 			},
 			(error) => {
-				// alert(JSON.stringify(error, null, 2));
 				this.setState({
 					success: false,
 					loading: false,
@@ -199,18 +170,18 @@ class AddEditProvider extends React.Component {
 		// const { name } = this.state;
 		const id = this.state.id;
 		// console.log(name);
-		APIService.updateProvider(id, this.state).then(
+		APIService.updateUser(id, this.state).then(
 			(unit) => {
 				this.setState({
 					success: true,
 					loading: false,
 					redirect: true,
-					redirectPath: '/providers',
+					redirectPath: '/users',
 					redirectData: {
 						visible: true,
 						alertStyle: 'success',
 						alertIcon: 'fa fa-check mx-2',
-						alertMessage: 'Provider updated successfully.'
+						alertMessage: 'User updated successfully.'
 					}
 				});
 			},
@@ -254,143 +225,64 @@ class AddEditProvider extends React.Component {
 		);
 	};
 
-	_renderForm(selectCountry, selectState, selectCity) {
+	_renderForm() {
 		return (
 			<Form onSubmit={this.state.update ? this._handleSubmitUpdate : this._handleSubmitAdd}>
 				<Row form>
 					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
-						<label htmlFor="feFirstName">First Name</label>
+						<label htmlFor="feTitle">Test Case Title*</label>
 						<FormInput
-							id="feFirstName"
+							id="feTitle"
 							type="text"
-							placeholder="First Name"
-							name="fistName"
+							placeholder="Title that explain the test case in one line"
+							name="title"
 							onChange={(e) => {
-								this.setState({ first_name: e.target.value });
-								this.value = this.state.first_name;
+								this.setState({ title: e.target.value });
+								this.value = this.state.title;
 							}}
-							value={this.state.first_name}
-						/>
-					</Col>
-					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
-						<label htmlFor="feLastName">Last Name</label>
-						<FormInput
-							id="feLastName"
-							placeholder="Last Name"
-							type="text"
-							name="lastName"
-							onChange={(e) => {
-								this.setState({ last_name: e.target.value });
-								this.value = this.state.last_name;
-							}}
-							value={this.state.last_name}
+							value={this.state.title}
 						/>
 					</Col>
 				</Row>
+
 				<Row form>
 					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
-						<label htmlFor="feEmail">Email</label>
-						<FormInput
-							id="feEmail"
-							type="email"
-							placeholder="Email"
-							name="email"
+						<label htmlFor="feDescription">Description</label>
+						<FormTextarea
+							id="feDescription"
+							rows="10"
+							placeholder="Precondition, steps, test case type, etc."
+							name="description"
 							onChange={(e) => {
-								this.setState({ email: e.target.value });
-								this.value = this.state.email;
+								this.setState({ description: e.target.value });
+								this.value = this.state.description;
 							}}
-							value={this.state.email}
+							value={this.state.description}
 						/>
 					</Col>
 					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
-						<label htmlFor="feMobile">Mobile</label>
-						<FormInput
-							id="feMobile"
-							type="text"
-							placeholder="Mobile"
-							name="mobile"
+						<label htmlFor="feExpectedResults">Expected Results*</label>
+						<FormTextarea
+							id="feExpectedResults"
+							rows="10"
+							placeholder="Expected Results"
+							name="expected_results"
 							onChange={(e) => {
-								this.setState({ phone: e.target.value });
-								this.value = this.state.phone;
+								this.setState({ expected_results: e.target.value });
+								this.value = this.state.expected_results;
 							}}
-							value={this.state.phone}
+							value={this.state.expected_results}
 						/>
-					</Col>
-				</Row>
-				<Row form>
-					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
-						<label htmlFor="feCountry">Country</label>
-						<FormSelect id="feCountry" name="country_id" onChange={this._handleChangeCountry}>
-							<option>Choose</option>
-							{selectCountry}
-						</FormSelect>
-					</Col>
-					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
-						<label htmlFor="feState">State</label>
-						<FormSelect id="feState" onChange={this._handleChangeState}>
-							<option>Choose</option>
-							{selectState}
-						</FormSelect>
-					</Col>
-				</Row>
-				<Row form>
-					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
-						<label htmlFor="feCity">City</label>
-						<FormSelect id="feCity" onChange={this._handleChangeCity}>
-							<option>Choose</option>
-							{selectCity}
-						</FormSelect>
-					</Col>
-					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
-						<label htmlFor="feZip">Zip Code</label>
-						<FormInput
-							id="feZip"
-							type="text"
-							placeholder="Zip Code"
-							name="zip_code"
-							onChange={(e) => {
-								this.setState({ zip_code: e.target.value });
-								this.value = this.state.zip_code;
-							}}
-							value={this.state.zip_code}
-						/>
-					</Col>
-				</Row>
-				<Row form>
-					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
-						<label htmlFor="feAddress">Address</label>
-						<FormInput
-							id="feAddress"
-							type="text"
-							placeholder="Address"
-							name="address_1"
-							onChange={(e) => {
-								this.setState({ address_1: e.target.value });
-								this.value = this.state.address_1;
-							}}
-							value={this.state.address_1}
-						/>
-					</Col>
-					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
-						<label htmlFor="profileImage">Profile Image</label>
-						<div className="custom-file mb-3">
-							<input
-								type="file"
-								className="custom-file-input"
-								id="profileImage"
-								name="profile_photo"
-								onChange={this._handleChangeImage}
-							/>
-							<label className="custom-file-label" htmlFor="profileImage">
-								Choose file...
-							</label>
-						</div>
 					</Col>
 				</Row>
 
 				<Row form>
 					<Col sm={{ size: 6, order: 6, offset: 5 }}>
-						{this.state.update ? <Button type="submit">Update</Button> : <Button type="submit">Add</Button>}
+						{this.state.update ? (
+							<Button type="submit">Update Test Case</Button>
+						) : (
+							<Button type="submit">Add Test Case</Button>
+						)}
 					</Col>
 				</Row>
 			</Form>
@@ -402,9 +294,6 @@ class AddEditProvider extends React.Component {
 		this.renderCountry = this.renderCountry.bind(this);
 		this.renderState = this.renderState.bind(this);
 		this.renderCity = this.renderCity.bind(this);
-		const selectCountry = this.state.countries.length > 0 && this.state.countries.map(this.renderCountry);
-		const selectState = this.state.states.length > 0 && this.state.states.map(this.renderState);
-		const selectCity = this.state.cities.length > 0 && this.state.cities.map(this.renderCity);
 		if (this.state.redirect) {
 			return (
 				<Redirect
@@ -437,13 +326,11 @@ class AddEditProvider extends React.Component {
 						</Alert>
 					</Container>
 					<Container fluid className="main-content-container px-4">
-						<MainTitle title="Service Providers" />
+						<MainTitle title="Test Cases" />
 						<Row>
 							<Col>
 								<Card small className="mb-4">
-									<ContentHeader
-										title={this.state.update ? 'Edit Service Provider' : 'Add Service Provider'}
-									>
+									<ContentHeader title={this.state.update ? 'Edit Test Case' : 'Add Test Case'}>
 										<Button
 											outline
 											theme="primary"
@@ -456,7 +343,7 @@ class AddEditProvider extends React.Component {
 												) {
 													this.setState({
 														redirect: true,
-														redirectPath: '/providers'
+														redirectPath: '/users'
 													});
 												}
 											}}
@@ -464,9 +351,7 @@ class AddEditProvider extends React.Component {
 											Back
 										</Button>
 									</ContentHeader>
-									<CardBody className="p-0 pb-3">
-										{this._renderForm(selectCountry, selectState, selectCity)}
-									</CardBody>
+									<CardBody className="p-0 pb-3">{this._renderForm()}</CardBody>
 								</Card>
 							</Col>
 						</Row>
@@ -479,4 +364,4 @@ class AddEditProvider extends React.Component {
 	}
 }
 
-export default AddEditProvider;
+export default AddEditUser;

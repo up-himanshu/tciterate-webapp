@@ -12,7 +12,7 @@ export default function () {
 		// 	to: '/sub-admins'
 		// },
 		{
-			title: 'Users Management',
+			title: 'Users',
 			htmlBefore: '<i class="material-icons">people</i>',
 			to: '/users'
 		},
@@ -28,21 +28,21 @@ export default function () {
 		// 	to: '/providers'
 		// },
 
-		{
-			title: 'Categories',
-			htmlBefore: '<i class="material-icons">category</i>',
-			to: '/categories'
-		},
-		{
-			title: 'Sub Categories',
-			htmlBefore: '<i class="material-icons">category</i>',
-			to: '/sub-categories'
-		},
-		{
-			title: 'Service Type',
-			htmlBefore: '<i class="material-icons">category</i>',
-			to: '/service-type'
-		},
+		// {
+		// 	title: 'Categories',
+		// 	htmlBefore: '<i class="material-icons">category</i>',
+		// 	to: '/categories'
+		// },
+		// {
+		// 	title: 'Sub Categories',
+		// 	htmlBefore: '<i class="material-icons">category</i>',
+		// 	to: '/sub-categories'
+		// },
+		// {
+		// 	title: 'Service Type',
+		// 	htmlBefore: '<i class="material-icons">category</i>',
+		// 	to: '/service-type'
+		// },
 
 		{
 			title: 'Forms & Components',

@@ -1,13 +1,12 @@
 import React from 'react';
-import { Container, Row, Col, Card, CardBody, Button, ButtonGroup, Alert } from 'shards-react';
+import { Container, Row, Col, Card, CardBody, Button, Alert } from 'shards-react';
 import MainTitle from '../../components/common/MainTitle';
 import ContentHeader from '../../components/common/ContentHeader';
 import Loader from '../../components/Loader/Loader';
 import { Redirect } from 'react-router-dom';
-import { APIService } from '../../utils/APIService';
 import userLoginStatus from '../../utils/userLoginStatus';
 
-class Disciplines extends React.Component {
+class UserDetails extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -17,12 +16,14 @@ class Disciplines extends React.Component {
 			loading: false,
 			listItems: false,
 			internetConnected: true,
+			data: this.props.location.state ? this.props.location.state.data : '',
 			visible: this.props.location.state ? this.props.location.state.visible : false,
 			alertStyle: this.props.location.state ? this.props.location.state.alertStyle : '',
 			alertIcon: this.props.location.state ? this.props.location.state.alertIcon : '',
 			alertMessage: this.props.location.state ? this.props.location.state.alertMessage : '',
 			unitData: []
 		};
+		// console.log(this.state.data);
 		this.dismiss = this.dismiss.bind(this);
 	}
 
@@ -30,7 +31,12 @@ class Disciplines extends React.Component {
 		if (this.state.loginStatus === undefined) {
 			userLoginStatus().then(
 				(value) => {
-					this._fetchListData();
+					this.setState({
+						loginStatus: true,
+						listItems: true,
+						loading: false
+					});
+					// this._fetchListData();
 				},
 				(reason) => {
 					this.setState({ loginStatus: false });
@@ -39,90 +45,11 @@ class Disciplines extends React.Component {
 		}
 	}
 
-	_fetchListData = () => {
-		APIService.fetchAllDisciplines().then(
-			(units) => {
-				this.setState({
-					loginStatus: true,
-					listItems: true,
-					loading: false,
-					unitData: units
-				});
-			},
-			(error) => this.setState({ internetConnected: false })
-		);
-	};
-
-	_handleDelete(id) {
-		APIService.deleteDisciplines(id).then(
-			() => {
-				this.setState({
-					listItems: true,
-					loading: false
-				});
-				this._fetchListData();
-			},
-			(error) => {
-				alert(error.errorMessage);
-				this.setState({ loading: false, alertVisible: true });
-			}
-		);
-	}
-
 	dismiss() {
 		this.setState({ visible: false });
 	}
 
-	renderRow = (Obj, i) => {
-		return (
-			<tr key={i}>
-				<td>{i + 1}</td>
-				<td>{Obj.name}</td>
-				<td align="right">
-					<ButtonGroup size="sm">
-						<Button
-							theme="info"
-							onClick={() =>
-								this.setState({
-									redirect: true,
-									redirectPath: '/disciplines/' + Obj.id,
-									redirectData: { name: Obj.name }
-								})
-							}
-						>
-							Detail
-						</Button>
-						<Button
-							theme="secondary"
-							onClick={() =>
-								this.setState({
-									redirect: true,
-									redirectPath: '/disciplines/' + Obj.id + '/edit',
-									redirectData: { name: Obj.name, id: Obj.id, update: true }
-								})
-							}
-						>
-							Edit
-						</Button>
-						<Button
-							theme="danger"
-							onClick={() => {
-								if (window.confirm('are you sure?')) {
-									this._handleDelete(Obj.id);
-								}
-							}}
-						>
-							Delete
-						</Button>
-					</ButtonGroup>
-				</td>
-			</tr>
-		);
-	};
-
 	render() {
-		this.renderRow = this.renderRow.bind(this);
-		const tableBody = this.state.unitData.length > 0 && this.state.unitData.map(this.renderRow);
 		const { loginStatus, loading, internetConnected } = this.state;
 		if (this.state.redirect) {
 			return (
@@ -156,11 +83,11 @@ class Disciplines extends React.Component {
 						</Alert>
 					</Container>
 					<Container fluid className="main-content-container px-4">
-						<MainTitle title="Disciplines" />
+						<MainTitle title="Customer" />
 						<Row>
 							<Col>
 								<Card small className="mb-4">
-									<ContentHeader title="Disciplines">
+									<ContentHeader title="Customer Details">
 										<Button
 											outline
 											theme="primary"
@@ -168,11 +95,11 @@ class Disciplines extends React.Component {
 											onClick={() =>
 												this.setState({
 													redirect: true,
-													redirectPath: '/disciplines/new'
+													redirectPath: '/users'
 												})
 											}
 										>
-											Add Disciplines
+											Back
 										</Button>
 									</ContentHeader>
 									<CardBody className="p-0 pb-3">
@@ -181,15 +108,37 @@ class Disciplines extends React.Component {
 												<thead className="bg-light">
 													<tr>
 														<th scope="col" className="border-0">
-															id
+															Customer Name
 														</th>
 														<th scope="col" className="border-0">
-															Disciplines Name
+															Email
 														</th>
-														<th scope="col" className="border-0" align="right" />
+														<th scope="col" className="border-0">
+															Phone
+														</th>
+														<th scope="col" className="border-0">
+															Country
+														</th>
+														<th scope="col" className="border-0">
+															State
+														</th>
+														<th scope="col" className="border-0">
+															City
+														</th>
 													</tr>
 												</thead>
-												<tbody>{tableBody}</tbody>
+												<tbody>
+													<tr>
+														<td>
+															{this.state.data.first_name} {this.state.data.last_name}
+														</td>
+														<td>{this.state.data.email}</td>
+														<td>{this.state.data.phone}</td>
+														<td>{this.state.data.countries.name}</td>
+														<td>{this.state.data.states.name}</td>
+														<td>{this.state.data.cities.name}</td>
+													</tr>
+												</tbody>
 											</table>
 										</CardBody>
 									</CardBody>
@@ -205,4 +154,4 @@ class Disciplines extends React.Component {
 	}
 }
 
-export default Disciplines;
+export default UserDetails;

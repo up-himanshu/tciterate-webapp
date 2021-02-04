@@ -7,41 +7,18 @@ import config from './../data/config';
 export const APIService = {
 	login,
 	logout,
-	fetchAllCategories,
-	addCategory,
-	updateCategory,
-	deleteCategory,
-	fetchAllSubCategories,
-	addSubCategory,
-	updateSubCategory,
-	adminProfile,
 	fetchAllUsers,
-	fetchAllProviders,
-	deleteSubCategory,
 	addUser,
-	updateUser,
-	deleteUser,
-	statusUser,
-	addProvider,
-	updateProvider,
-	deleteProvider,
-	fetchCountry,
-	fetchState,
-	fetchCity,
-	fetchAllServiceType,
-	fetchSubCategory,
-	addServiceType,
-	updateServiceType,
-	deleteServiceType,
-	fetchAllSubAdmins,
-	addSubAdmin,
-	updateSubAdmin,
-	deleteSubAdmin,
-	fetchAllAdminRoleType,
-	statusAdmin,
-	statusCategory,
-	statusSubCategory,
-	statusServiceType
+	fetchAllProjects,
+	addProject,
+	fetchProjectTestCases,
+	addProjectTestCase,
+	updateProjectTestCase,
+	deleteProjectTestCase,
+	fetchProjectExecutions,
+	addProjectExecution,
+	fetchExecutionResults,
+	updateExecutionResult
 };
 
 const baseUrl =
@@ -75,94 +52,20 @@ function login(email, password) {
 }
 
 function logout() {
-	localStorage.removeItem('user');
-	localStorage.removeItem('units');
-	localStorage.removeItem('categories');
-	localStorage.removeItem('orderStatuses');
-}
-
-async function fetchAllSubAdmins() {
-	const requestOptions = {
-		method: 'GET',
-		headers: authHeader()
-	};
-
-	return fetch(baseUrl + config.endpoints.sub_admins, requestOptions)
-		.then(_handleResponse)
-		.then((users) => {
-			return users;
-		});
-}
-
-function addSubAdmin(body) {
-	// console.log(body);
-	const requestOptions = {
-		method: 'POST',
-		headers: authHeader(),
-		body: JSON.stringify(body)
-	};
-
-	return fetch(baseUrl + config.endpoints.sub_admins, requestOptions)
-		.then(_handleResponse)
-		.then((category) => {
-			return category;
-		});
-}
-
-function updateSubAdmin(id, body) {
-	const requestOptions = {
-		method: 'PUT',
-		headers: authHeader(),
-		body: JSON.stringify(body)
-	};
-
-	return fetch(baseUrl + config.endpoints.sub_admins + id, requestOptions)
-		.then(_handleResponse)
-		.then((category) => {
-			return category;
-		});
-}
-
-function statusAdmin(id) {
-	const requestOptions = {
-		method: 'GET',
-		headers: authHeader()
-	};
-
-	return fetch(baseUrl + config.endpoints.sub_admins + id + '/status', requestOptions)
-		.then(_handleResponse)
-		.then((res) => {
-			return res;
-		});
-}
-
-function deleteSubAdmin(id) {
 	const requestOptions = {
 		method: 'DELETE',
 		headers: authHeader()
 	};
-
-	return fetch(baseUrl + config.endpoints.sub_admins + id, requestOptions)
+	return fetch(baseUrl + config.endpoints.users, requestOptions)
 		.then(_handleResponse)
-		.then((category) => {
-			return category;
+		.then((user) => {
+			localStorage.removeItem('user');
+			localStorage.removeItem('token');
+			return user;
 		});
 }
 
-async function fetchAllAdminRoleType(token) {
-	const requestOptions = {
-		method: 'GET',
-		headers: authHeader()
-	};
-
-	return fetch(baseUrl + config.endpoints.sub_admins + 'roles-type', requestOptions)
-		.then(_handleResponse)
-		.then((users) => {
-			return users;
-		});
-}
-
-async function fetchAllUsers(token) {
+async function fetchAllUsers() {
 	const requestOptions = {
 		method: 'GET',
 		headers: authHeader()
@@ -172,165 +75,6 @@ async function fetchAllUsers(token) {
 		.then(_handleResponse)
 		.then((users) => {
 			return users;
-		});
-}
-
-async function fetchAllProviders(token) {
-	const requestOptions = {
-		method: 'GET',
-		headers: authHeader()
-	};
-
-	return fetch(baseUrl + config.endpoints.providers, requestOptions)
-		.then(_handleResponse)
-		.then((providers) => {
-			return providers;
-		});
-}
-
-function fetchAllCategories() {
-	const requestOptions = {
-		method: 'GET',
-		headers: authHeader()
-	};
-
-	return fetch(baseUrl + config.endpoints.categories, requestOptions)
-		.then(_handleResponse)
-		.then(async (categories) => {
-			// await localStorage.setItem('categories', JSON.stringify(categories));
-			return categories;
-		});
-}
-
-function addCategory(body) {
-	// console.log(body);
-
-	var formData = new FormData();
-	formData.append('category_image', body.category_image);
-	formData.append('description', body.description);
-	formData.append('category_name', body.name);
-
-	const requestOptions = {
-		method: 'POST',
-		headers: authHeaderStore(),
-		body: formData
-	};
-
-	return fetch(baseUrl + config.endpoints.add_categories, requestOptions)
-		.then(_handleResponse)
-		.then((category) => {
-			return category;
-		});
-}
-
-function updateCategory(id, body) {
-	// const categoryBody = { category_name: body };
-
-	var formData = new FormData();
-
-	formData.append('description', body.description);
-	formData.append('category_name', body.name);
-
-	if (body.category_image_change) {
-		formData.append('category_image', body.category_image);
-	}
-	formData.append('category_image_change', body.category_image_change);
-
-	const requestOptions = {
-		method: 'PUT',
-		headers: authHeaderStore(),
-		body: formData
-	};
-
-	return fetch(baseUrl + config.endpoints.categories + id, requestOptions)
-		.then(_handleResponse)
-		.then((category) => {
-			return category;
-		});
-}
-
-function deleteCategory(id) {
-	const requestOptions = {
-		method: 'DELETE',
-		headers: authHeader()
-	};
-
-	return fetch(baseUrl + config.endpoints.categories + id, requestOptions)
-		.then(_handleResponse)
-		.then((category) => {
-			return category;
-		});
-}
-
-function fetchAllSubCategories() {
-	const requestOptions = {
-		method: 'GET',
-		headers: authHeader()
-	};
-
-	return fetch(baseUrl + config.endpoints.subcategories, requestOptions)
-		.then(_handleResponse)
-		.then(async (categories) => {
-			// console.log('categories :: ' + categories);
-
-			await localStorage.setItem('subcategories', JSON.stringify(categories));
-			return categories;
-		});
-}
-
-function addSubCategory(body) {
-	const requestOptions = {
-		method: 'POST',
-		headers: authHeader(),
-		body: JSON.stringify(body)
-	};
-
-	return fetch(baseUrl + config.endpoints.subcategories, requestOptions)
-		.then(_handleResponse)
-		.then((category) => {
-			return category;
-		});
-}
-
-function updateSubCategory(id, body) {
-	// console.log(body);
-	// const categoryBody = { name: body };
-	const requestOptions = {
-		method: 'PUT',
-		headers: authHeader(),
-		body: JSON.stringify(body)
-	};
-
-	return fetch(baseUrl + config.endpoints.subcategories + id, requestOptions)
-		.then(_handleResponse)
-		.then((category) => {
-			return category;
-		});
-}
-
-function deleteSubCategory(id) {
-	const requestOptions = {
-		method: 'DELETE',
-		headers: authHeader()
-	};
-
-	return fetch(baseUrl + config.endpoints.subcategories + id, requestOptions)
-		.then(_handleResponse)
-		.then((category) => {
-			return category;
-		});
-}
-
-function adminProfile() {
-	const requestOptions = {
-		method: 'GET',
-		headers: authHeader()
-	};
-
-	return fetch(baseUrl + config.endpoints.profile, requestOptions)
-		.then(_handleResponse)
-		.then((category) => {
-			return category;
 		});
 }
 
@@ -347,284 +91,132 @@ function addUser(body) {
 		});
 }
 
-function updateUser(id, body) {
-	var formData = new FormData();
-
-	if (body.profile_change) {
-		formData.append('profile_photo', body.profile_photo);
-	}
-
-	formData.append('first_name', body.first_name);
-	formData.append('last_name', body.last_name);
-	formData.append('email', body.email);
-	formData.append('address_1', body.address_1);
-	formData.append('city', body.city);
-	formData.append('state', body.state);
-	formData.append('country', body.country);
-	formData.append('zip_code', body.zip_code);
-	formData.append('phone', body.phone);
-	formData.append('profile_change', body.profile_change);
-	formData.append('role_type', body.role_type);
-
-	const requestOptions = {
-		method: 'PUT',
-		headers: authHeaderStore(),
-		body: formData
-	};
-
-	return fetch(baseUrl + config.endpoints.users + id, requestOptions)
-		.then(_handleResponse)
-		.then((user) => {
-			return user;
-		});
-}
-
-function deleteUser(id) {
-	const requestOptions = {
-		method: 'DELETE',
-		headers: authHeader()
-	};
-
-	return fetch(baseUrl + config.endpoints.users + id, requestOptions)
-		.then(_handleResponse)
-		.then((res) => {
-			return res;
-		});
-}
-
-function statusUser(id) {
+async function fetchAllProjects() {
 	const requestOptions = {
 		method: 'GET',
 		headers: authHeader()
 	};
 
-	return fetch(baseUrl + config.endpoints.users + id + '/status', requestOptions)
+	return fetch(baseUrl + config.endpoints.projects, requestOptions)
 		.then(_handleResponse)
-		.then((res) => {
-			return res;
+		.then((data) => {
+			return data;
 		});
 }
 
-async function fetchCountry(token) {
+function addProject(body) {
+	const requestOptions = {
+		method: 'POST',
+		headers: authHeader(),
+		body: JSON.stringify(body)
+	};
+	return fetch(baseUrl + config.endpoints.projects, requestOptions)
+		.then(_handleResponse)
+		.then((data) => {
+			return data;
+		});
+}
+
+async function fetchProjectTestCases(project_id) {
 	const requestOptions = {
 		method: 'GET',
 		headers: authHeader()
 	};
 
-	return fetch(baseUrl + config.endpoints.location + 'country', requestOptions)
+	return fetch(baseUrl + config.endpoints.testCases + project_id, requestOptions)
 		.then(_handleResponse)
-		.then((location) => {
-			return location;
+		.then((data) => {
+			return data;
 		});
 }
 
-async function fetchState(country_id) {
-	let body = { country_id: country_id };
+function addProjectTestCase(project_id, body) {
 	const requestOptions = {
 		method: 'POST',
 		headers: authHeader(),
 		body: JSON.stringify(body)
 	};
-
-	return fetch(baseUrl + config.endpoints.location + 'state', requestOptions)
+	return fetch(baseUrl + config.endpoints.testCases + project_id, requestOptions)
 		.then(_handleResponse)
-		.then((location) => {
-			return location;
+		.then((data) => {
+			return data;
 		});
 }
 
-async function fetchCity(state_id) {
-	let body = { state_id: state_id };
-	const requestOptions = {
-		method: 'POST',
-		headers: authHeader(),
-		body: JSON.stringify(body)
-	};
-
-	return fetch(baseUrl + config.endpoints.location + 'city', requestOptions)
-		.then(_handleResponse)
-		.then((location) => {
-			return location;
-		});
-}
-
-function addProvider(body) {
-	var formData = new FormData();
-	formData.append('profile_photo', body.profile_photo);
-	formData.append('first_name', body.first_name);
-	formData.append('last_name', body.last_name);
-	formData.append('email', body.email);
-	formData.append('password', body.password);
-	formData.append('address_1', body.address_1);
-	formData.append('city', body.city);
-	formData.append('state', body.state);
-	formData.append('country', body.country);
-	formData.append('zip_code', body.zip_code);
-	formData.append('phone', body.phone);
-
-	const requestOptions = {
-		method: 'POST',
-		headers: authHeaderStore(),
-		body: formData
-	};
-
-	return fetch(baseUrl + config.endpoints.providers, requestOptions)
-		.then(_handleResponse)
-		.then((user) => {
-			return user;
-		});
-}
-
-function updateProvider(id, body) {
-	var formData = new FormData();
-
-	if (body.profile_change) {
-		formData.append('profile_photo', body.profile_photo);
-	}
-
-	formData.append('first_name', body.first_name);
-	formData.append('last_name', body.last_name);
-	formData.append('email', body.email);
-	formData.append('address_1', body.address_1);
-	formData.append('city', body.city);
-	formData.append('state', body.state);
-	formData.append('country', body.country);
-	formData.append('zip_code', body.zip_code);
-	formData.append('phone', body.phone);
-	formData.append('profile_change', body.profile_change);
-
-	const requestOptions = {
-		method: 'PUT',
-		headers: authHeaderStore(),
-		body: formData
-	};
-
-	return fetch(baseUrl + config.endpoints.providers + id, requestOptions)
-		.then(_handleResponse)
-		.then((user) => {
-			return user;
-		});
-}
-
-function deleteProvider(id) {
-	const requestOptions = {
-		method: 'DELETE',
-		headers: authHeader()
-	};
-
-	return fetch(baseUrl + config.endpoints.providers + id, requestOptions)
-		.then(_handleResponse)
-		.then((res) => {
-			return res;
-		});
-}
-
-function fetchAllServiceType() {
-	const requestOptions = {
-		method: 'GET',
-		headers: authHeader()
-	};
-
-	return fetch(baseUrl + config.endpoints.serviceType, requestOptions)
-		.then(_handleResponse)
-		.then(async (serviceType) => {
-			await localStorage.setItem('serviceType', JSON.stringify(serviceType));
-			return serviceType;
-		});
-}
-
-function addServiceType(body) {
-	const requestOptions = {
-		method: 'POST',
-		headers: authHeader(),
-		body: JSON.stringify(body)
-	};
-
-	return fetch(baseUrl + config.endpoints.serviceType, requestOptions)
-		.then(_handleResponse)
-		.then((serviceType) => {
-			return serviceType;
-		});
-}
-
-function updateServiceType(id, body) {
+function updateProjectTestCase(id, body) {
 	const requestOptions = {
 		method: 'PUT',
 		headers: authHeader(),
 		body: JSON.stringify(body)
 	};
-
-	return fetch(baseUrl + config.endpoints.serviceType + id, requestOptions)
+	return fetch(baseUrl + config.endpoints.testCases + id, requestOptions)
 		.then(_handleResponse)
-		.then((serviceType) => {
-			return serviceType;
+		.then((data) => {
+			return data;
 		});
 }
 
-function deleteServiceType(id) {
+function deleteProjectTestCase(id) {
 	const requestOptions = {
 		method: 'DELETE',
 		headers: authHeader()
 	};
-
-	return fetch(baseUrl + config.endpoints.serviceType + id, requestOptions)
+	return fetch(baseUrl + config.endpoints.testCases + id, requestOptions)
 		.then(_handleResponse)
-		.then((res) => {
-			return res;
+		.then((data) => {
+			return data;
 		});
 }
 
-async function fetchSubCategory(category_id) {
-	let body = { category_id: category_id };
+async function fetchProjectExecutions() {
+	const requestOptions = {
+		method: 'GET',
+		headers: authHeader()
+	};
+
+	return fetch(baseUrl + config.endpoints.executions, requestOptions)
+		.then(_handleResponse)
+		.then((data) => {
+			return data;
+		});
+}
+
+function addProjectExecution(body) {
 	const requestOptions = {
 		method: 'POST',
 		headers: authHeader(),
 		body: JSON.stringify(body)
 	};
-
-	return fetch(baseUrl + config.endpoints.categories + 'sub-category', requestOptions)
+	return fetch(baseUrl + config.endpoints.executions, requestOptions)
 		.then(_handleResponse)
-		.then((location) => {
-			return location;
+		.then((data) => {
+			return data;
 		});
 }
 
-function statusCategory(id) {
+async function fetchExecutionResults(execution_id) {
 	const requestOptions = {
 		method: 'GET',
 		headers: authHeader()
 	};
 
-	return fetch(baseUrl + config.endpoints.categories + id + '/status', requestOptions)
+	return fetch(baseUrl + config.endpoints.executionResults + execution_id, requestOptions)
 		.then(_handleResponse)
-		.then((res) => {
-			return res;
+		.then((data) => {
+			return data;
 		});
 }
 
-function statusSubCategory(id) {
+function updateExecutionResult(id, body) {
 	const requestOptions = {
-		method: 'GET',
-		headers: authHeader()
+		method: 'POST',
+		headers: authHeader(),
+		body: JSON.stringify(body)
 	};
-
-	return fetch(baseUrl + config.endpoints.subcategories + id + '/status', requestOptions)
+	return fetch(baseUrl + config.endpoints.executionResults + id, requestOptions)
 		.then(_handleResponse)
-		.then((res) => {
-			return res;
-		});
-}
-
-function statusServiceType(id) {
-	const requestOptions = {
-		method: 'GET',
-		headers: authHeader()
-	};
-
-	return fetch(baseUrl + config.endpoints.serviceType + id + '/status', requestOptions)
-		.then(_handleResponse)
-		.then((res) => {
-			return res;
+		.then((data) => {
+			return data;
 		});
 }
 

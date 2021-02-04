@@ -23,7 +23,7 @@ class Users extends React.Component {
 			alertStyle: this.props.location.state ? this.props.location.state.alertStyle : '',
 			alertIcon: this.props.location.state ? this.props.location.state.alertIcon : '',
 			alertMessage: this.props.location.state ? this.props.location.state.alertMessage : '',
-			unitData: []
+			listData: []
 		};
 		this.dismiss = this.dismiss.bind(this);
 	}
@@ -42,13 +42,13 @@ class Users extends React.Component {
 	}
 
 	_fetchListData = () => {
-		APIService.fetchAllUsers().then(
-			(units) => {
+		APIService.fetchAllProjects().then(
+			(data) => {
 				this.setState({
 					loginStatus: true,
 					listItems: true,
 					loading: false,
-					unitData: units
+					listData: data
 				});
 			},
 			(error) => this.setState({ internetConnected: false })
@@ -125,7 +125,7 @@ class Users extends React.Component {
 						</Alert>
 					</Container>
 					<Container fluid className="main-content-container px-4">
-						<MainTitle title="Customer Section" />
+						<MainTitle title="Projects" />
 						<Row>
 							<Col>
 								<Card small className="mb-4">
@@ -137,25 +137,22 @@ class Users extends React.Component {
 											onClick={() =>
 												this.setState({
 													redirect: true,
-													redirectPath: '/users/new'
+													redirectPath: '/projects/new'
 												})
 											}
 										>
-											Add Customer
+											Add Project
 										</Button>
 									</ContentHeader>
 									<CardBody className="p-0 pb-3">
 										<CardBody className="p-0 pb-3">
 											<MaterialTable
-												title="Customers"
+												title="Projects"
 												columns={[
 													{ title: 'ID', field: 'id' },
-													{ title: 'Customer Name', field: 'first_name' },
-													{ title: 'Email', field: 'email' },
-													{ title: 'Phone', field: 'phone' },
-													{ title: 'User Role', field: 'user_roles.name' }
+													{ title: 'Name', field: 'name' }
 												]}
-												data={this.state.unitData}
+												data={this.state.listData}
 												options={{
 													search: true,
 													actionsColumnIndex: -1
@@ -163,60 +160,13 @@ class Users extends React.Component {
 												actions={[
 													{
 														icon: 'visibility',
-														tooltip: 'User Details',
+														tooltip: 'Project Details',
 														onClick: (event, rowData) => {
 															this.setState({
 																redirect: true,
-																redirectPath: '/users/' + rowData.id,
+																redirectPath: '/projects/' + rowData.id + '/testcases',
 																redirectData: { data: rowData }
 															});
-														}
-													},
-													{
-														icon: 'edit',
-														tooltip: 'User Edit',
-														onClick: (event, rowData) => {
-															this.setState({
-																redirect: true,
-																redirectPath: '/users/' + rowData.id + '/edit',
-																redirectData: {
-																	data: rowData,
-																	id: rowData.id,
-																	update: true,
-																	first_name: rowData.first_name,
-																	last_name: rowData.last_name,
-																	email: rowData.email,
-																	city: rowData.city,
-																	country: rowData.country,
-																	state: rowData.state,
-																	phone: rowData.phone,
-																	zip_code: rowData.zip_code,
-																	address_1: rowData.address_1,
-																	role_type: rowData.role_type
-																}
-															});
-														}
-													},
-													(rowData) => ({
-														icon: rowData.status ? 'check' : 'cancel',
-														tooltip: rowData.status ? 'Activate' : 'Deactivate',
-														onClick: (event, rowData) => {
-															if (window.confirm('are you sure?')) {
-																this._handleStatus(rowData.id);
-															}
-														}
-													}),
-													{
-														icon: 'delete',
-														tooltip: 'Delete User',
-														onClick: (event, rowData) => {
-															if (
-																window.confirm(
-																	'Are you sure, you want to permanently delete this record?'
-																)
-															) {
-																this._handleDelete(rowData.id);
-															}
 														}
 													}
 												]}

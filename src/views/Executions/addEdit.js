@@ -10,8 +10,7 @@ import {
 	// ButtonGroup,
 	Form,
 	FormInput,
-	Alert,
-	FormTextarea
+	Alert
 } from 'shards-react';
 // import PageTitle from '../../components/common/PageTitle';
 import MainTitle from '../../components/common/MainTitle';
@@ -22,9 +21,10 @@ import { Redirect } from 'react-router-dom';
 import { APIService } from '../../utils/APIService';
 import userLoginStatus from '../../utils/userLoginStatus';
 
-class AddEditServiceType extends React.Component {
+class AddEditUser extends React.Component {
 	constructor(props) {
 		super(props);
+		// console.log('props in constructor ', props);
 		this.state = {
 			loginStatus: undefined,
 			success: false,
@@ -33,23 +33,34 @@ class AddEditServiceType extends React.Component {
 			listItems: false,
 			internetConnected: true,
 			visible: false,
-			name: this.props.location.state ? this.props.location.state.name : '',
-			category_id: this.props.location.state ? this.props.location.state.category_id : '',
-			sub_category_id: this.props.location.state ? this.props.location.state.sub_category_id : '',
+			first_name: this.props.location.state ? this.props.location.state.first_name : '',
+			last_name: this.props.location.state ? this.props.location.state.last_name : '',
+			email: this.props.location.state ? this.props.location.state.email : '',
+			password: this.props.location.state ? this.props.location.state.password : '',
 			id: this.props.location.state ? this.props.location.state.id : '',
 			update: this.props.location.state ? this.props.location.state.update : false,
-			description: this.props.location.state ? this.props.location.state.description : '',
-			unitData: [],
-			subCategory: []
+			country: this.props.location.state ? this.props.location.state.country : '',
+			state: this.props.location.state ? this.props.location.state.state : '',
+			city: this.props.location.state ? this.props.location.state.city : '',
+			phone: this.props.location.state ? this.props.location.state.phone : '',
+			zip_code: this.props.location.state ? this.props.location.state.zip_code : '',
+			address_1: this.props.location.state ? this.props.location.state.address_1 : '',
+			profile_photo: this.props.location.state ? this.props.location.state.profile_photo : '',
+			role_type: this.props.location.state ? this.props.location.state.role_type : '',
+			profile_change: false,
+			countries: [],
+			states: [],
+			cities: []
 		};
-
-		// console.log(this.state);
-
+		console.log(this.state);
 		this._handleChange = this._handleChange.bind(this);
-		this._handleChangeCategory = this._handleChangeCategory.bind(this);
-		this._handleChangeSubCategory = this._handleChangeSubCategory.bind(this);
+
 		this._handleSubmitAdd = this._handleSubmitAdd.bind(this);
 		this._handleSubmitUpdate = this._handleSubmitUpdate.bind(this);
+		this._handleChangeCountry = this._handleChangeCountry.bind(this);
+		this._handleChangeState = this._handleChangeState.bind(this);
+		this._handleChangeCity = this._handleChangeCity.bind(this);
+		this._handleChangeImage = this._handleChangeImage.bind(this);
 		this.dismiss = this.dismiss.bind(this);
 	}
 
@@ -57,11 +68,6 @@ class AddEditServiceType extends React.Component {
 		if (this.state.loginStatus === undefined) {
 			userLoginStatus().then(
 				(value) => {
-					this._fetchListData();
-
-					if (this.state.update) {
-						this._fetchSubListData();
-					}
 					this.setState({
 						loginStatus: true,
 						loading: false
@@ -74,23 +80,23 @@ class AddEditServiceType extends React.Component {
 		}
 	}
 
-	_fetchListData = () => {
-		APIService.fetchAllCategories().then(
+	_fetchStateData = () => {
+		const { country } = this.state;
+		APIService.fetchState(country).then(
 			(units) => {
 				this.setState({
-					unitData: units
+					states: units
 				});
 			},
 			(error) => this.setState({ internetConnected: false })
 		);
 	};
-
-	_fetchSubListData = () => {
-		const { category_id } = this.state;
-		APIService.fetchSubCategory(category_id).then(
+	_fetchCityData = () => {
+		const { state } = this.state;
+		APIService.fetchCity(state).then(
 			(units) => {
 				this.setState({
-					subCategory: units
+					cities: units
 				});
 			},
 			(error) => this.setState({ internetConnected: false })
@@ -101,42 +107,51 @@ class AddEditServiceType extends React.Component {
 		const { name, value } = e.target;
 		this.setState({ [name]: value });
 	}
-	async _handleChangeCategory(e) {
-		await this.setState({ category_id: e.target.value });
-		this._fetchSubListData();
+
+	async _handleChangeCountry(e) {
+		// console.log(e.target.value);
+		await this.setState({ country: e.target.value });
+		this._fetchStateData();
+		// console.log(this.state);
 	}
 
-	_handleChangeSubCategory(e) {
-		this.setState({ sub_category_id: e.target.value });
+	async _handleChangeState(e) {
+		await this.setState({ state: e.target.value });
+		this._fetchCityData();
+	}
+
+	_handleChangeCity(e) {
+		this.setState({ city: e.target.value });
+	}
+
+	_handleChangeImage(e) {
+		// console.log(e.target.files[0]);
+		this.setState({ profile_photo: e.target.files[0] });
+		this.setState({ profile_change: true });
 	}
 
 	_handleSubmitAdd(e) {
 		e.preventDefault();
 		this.setState({ loading: true });
-		const { name, sub_category_id, category_id, description } = this.state;
-		// const sub_category_name = name;
-		APIService.addServiceType({
-			sub_category_id,
-			name,
-			category_id,
-			description
-		}).then(
+		// const { firstName, lastName } = this.state;
+		// console.log(this.state);
+		APIService.addUser(this.state).then(
 			(unit) => {
 				this.setState({
 					success: true,
 					loading: false,
 					redirect: true,
-					redirectPath: '/service-type',
+					redirectPath: '/users',
 					redirectData: {
 						visible: true,
 						alertStyle: 'success',
 						alertIcon: 'fa fa-check mx-2',
-						alertMessage: 'Service Type added successfully.'
+						alertMessage: 'User added successfully.'
 					}
 				});
 			},
 			(error) => {
-				// alert(JSON.stringify(error, null, 2));
+				alert(JSON.stringify(error, null, 2));
 				this.setState({
 					success: false,
 					loading: false,
@@ -151,22 +166,21 @@ class AddEditServiceType extends React.Component {
 
 	_handleSubmitUpdate(e) {
 		e.preventDefault();
-		const { name, category_id, sub_category_id, description } = this.state;
+		// const { name } = this.state;
 		const id = this.state.id;
-		// const name = name;
 		// console.log(name);
-		APIService.updateServiceType(id, { name, category_id, sub_category_id, description }).then(
+		APIService.updateUser(id, this.state).then(
 			(unit) => {
 				this.setState({
 					success: true,
 					loading: false,
 					redirect: true,
-					redirectPath: '/service-type',
+					redirectPath: '/users',
 					redirectData: {
 						visible: true,
 						alertStyle: 'success',
 						alertIcon: 'fa fa-check mx-2',
-						alertMessage: 'Service Type updated successfully.'
+						alertMessage: 'User updated successfully.'
 					}
 				});
 			},
@@ -188,80 +202,64 @@ class AddEditServiceType extends React.Component {
 	dismiss() {
 		this.setState({ visible: false });
 	}
-
-	renderRow = (Obj, i) => {
+	renderCountry = (Obj, i) => {
 		return (
-			<option value={Obj.id} selected={this.state.category_id === Obj.id ? true : false} key={i}>
-				{Obj.category_name}
+			<option value={Obj.id} key={i} selected={this.state.country === Obj.id ? true : false}>
+				{Obj.name}
+			</option>
+		);
+	};
+	renderState = (Obj, i) => {
+		return (
+			<option value={Obj.id} key={i} selected={this.state.state === Obj.id ? true : false}>
+				{Obj.name}
+			</option>
+		);
+	};
+	renderCity = (Obj, i) => {
+		return (
+			<option value={Obj.id} key={i} selected={this.state.city === Obj.id ? true : false}>
+				{Obj.name}
 			</option>
 		);
 	};
 
-	renderSubcategory = (Obj, i) => {
-		return (
-			<option value={Obj.id} key={i} selected={this.state.sub_category_id === Obj.id ? true : false} key={i}>
-				{Obj.sub_category_name}
-			</option>
-		);
-	};
-
-	_renderForm(selectBody, selectSubCategory) {
+	_renderForm(selectCountry, selectState, selectCity) {
 		return (
 			<Form onSubmit={this.state.update ? this._handleSubmitUpdate : this._handleSubmitAdd}>
 				<Row form>
-					<Col sm={{ size: 4, order: 4, offset: 4, mt: 2 }}>
-						<select className="mt-2 form-control" name="category_id" onChange={this._handleChangeCategory}>
-							<option selected={this.state.category_id === '' ? true : false} disabled="disabled">
-								Select Category
-							</option>
-							{selectBody}
-						</select>
-					</Col>
-				</Row>
-
-				<Row form>
-					<Col sm={{ size: 4, order: 4, offset: 4, mt: 2 }}>
-						<select
-							className="mt-2 form-control"
-							name="sub_category_id"
-							onChange={this._handleChangeSubCategory}
-						>
-							<option selected={this.state.sub_category_id === '' ? true : false} disabled="disabled">
-								Select Sub Category
-							</option>
-							{selectSubCategory}
-						</select>
-					</Col>
-				</Row>
-
-				<Row form>
-					<Col sm={{ size: 4, order: 4, offset: 4 }} className="mt-2">
+					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
+						<label htmlFor="feEmail">Email</label>
 						<FormInput
-							id="unitName"
-							type="text"
-							placeholder="Service Type Name"
-							name="name"
-							value={this.state.name}
-							onChange={this._handleChange}
+							id="feEmail"
+							type="email"
+							placeholder="Email"
+							name="email"
+							onChange={(e) => {
+								this.setState({ email: e.target.value });
+								this.value = this.state.email;
+							}}
+							value={this.state.email}
+						/>
+					</Col>
+					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
+						<label htmlFor="fePassword">Password</label>
+						<FormInput
+							id="fePassword"
+							type="password"
+							placeholder="Password"
+							name="password"
+							onChange={(e) => {
+								this.setState({ password: e.target.value });
+								this.value = this.state.password;
+							}}
+							value={this.state.password}
 						/>
 					</Col>
 				</Row>
 
 				<Row form>
-					<Col sm={{ size: 4, order: 4, offset: 4 }} className="mt-3">
-						<FormTextarea
-							id="description"
-							type="text"
-							placeholder="Description"
-							name="description"
-							value={this.state.description}
-							onChange={this._handleChange}
-						/>
-					</Col>
-				</Row>
-
-				<Row form>
-					<Col sm={{ size: 6, order: 6, offset: 5 }} className="mt-2">
+					<Col sm={{ size: 6, order: 6, offset: 5 }}>
 						{this.state.update ? <Button type="submit">Update</Button> : <Button type="submit">Add</Button>}
 					</Col>
 				</Row>
@@ -271,13 +269,12 @@ class AddEditServiceType extends React.Component {
 
 	render() {
 		const { loginStatus, loading, internetConnected } = this.state;
-		this.renderRow = this.renderRow.bind(this);
-		const selectBody = this.state.unitData.length > 0 && this.state.unitData.map(this.renderRow);
-
-		this.renderSubcategory = this.renderSubcategory.bind(this);
-		const selectSubCategory =
-			this.state.subCategory.length > 0 && this.state.subCategory.map(this.renderSubcategory);
-
+		this.renderCountry = this.renderCountry.bind(this);
+		this.renderState = this.renderState.bind(this);
+		this.renderCity = this.renderCity.bind(this);
+		const selectCountry = this.state.countries.length > 0 && this.state.countries.map(this.renderCountry);
+		const selectState = this.state.states.length > 0 && this.state.states.map(this.renderState);
+		const selectCity = this.state.cities.length > 0 && this.state.cities.map(this.renderCity);
 		if (this.state.redirect) {
 			return (
 				<Redirect
@@ -310,13 +307,11 @@ class AddEditServiceType extends React.Component {
 						</Alert>
 					</Container>
 					<Container fluid className="main-content-container px-4">
-						<MainTitle title="Service Type" />
+						<MainTitle title="Customers" />
 						<Row>
 							<Col>
 								<Card small className="mb-4">
-									<ContentHeader
-										title={this.state.name === '' ? 'Add Service Type' : 'Edit Service Type'}
-									>
+									<ContentHeader title={this.state.update ? 'Edit Customer' : 'Add Customer'}>
 										<Button
 											outline
 											theme="primary"
@@ -329,7 +324,7 @@ class AddEditServiceType extends React.Component {
 												) {
 													this.setState({
 														redirect: true,
-														redirectPath: '/service-type'
+														redirectPath: '/users'
 													});
 												}
 											}}
@@ -338,7 +333,7 @@ class AddEditServiceType extends React.Component {
 										</Button>
 									</ContentHeader>
 									<CardBody className="p-0 pb-3">
-										{this._renderForm(selectBody, selectSubCategory)}
+										{this._renderForm(selectCountry, selectState, selectCity)}
 									</CardBody>
 								</Card>
 							</Col>
@@ -352,4 +347,4 @@ class AddEditServiceType extends React.Component {
 	}
 }
 
-export default AddEditServiceType;
+export default AddEditUser;

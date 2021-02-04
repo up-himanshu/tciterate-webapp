@@ -125,7 +125,7 @@ class Users extends React.Component {
 						</Alert>
 					</Container>
 					<Container fluid className="main-content-container px-4">
-						<MainTitle title="Customer Section" />
+						<MainTitle title="Users" />
 						<Row>
 							<Col>
 								<Card small className="mb-4">
@@ -141,19 +141,16 @@ class Users extends React.Component {
 												})
 											}
 										>
-											Add Customer
+											Add User
 										</Button>
 									</ContentHeader>
 									<CardBody className="p-0 pb-3">
 										<CardBody className="p-0 pb-3">
 											<MaterialTable
-												title="Customers"
+												title="Users"
 												columns={[
 													{ title: 'ID', field: 'id' },
-													{ title: 'Customer Name', field: 'first_name' },
-													{ title: 'Email', field: 'email' },
-													{ title: 'Phone', field: 'phone' },
-													{ title: 'User Role', field: 'user_roles.name' }
+													{ title: 'Email', field: 'email' }
 												]}
 												data={this.state.unitData}
 												options={{

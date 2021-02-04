@@ -4,10 +4,9 @@ import MainTitle from '../../components/common/MainTitle';
 import ContentHeader from '../../components/common/ContentHeader';
 import Loader from '../../components/Loader/Loader';
 import { Redirect } from 'react-router-dom';
-import { APIService } from '../../utils/APIService';
 import userLoginStatus from '../../utils/userLoginStatus';
 
-class DisciplinesDetails extends React.Component {
+class UserDetails extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -17,14 +16,14 @@ class DisciplinesDetails extends React.Component {
 			loading: false,
 			listItems: false,
 			internetConnected: true,
-			id: this.props.location.state ? this.props.location.state.id : '',
+			data: this.props.location.state ? this.props.location.state.data : '',
 			visible: this.props.location.state ? this.props.location.state.visible : false,
 			alertStyle: this.props.location.state ? this.props.location.state.alertStyle : '',
 			alertIcon: this.props.location.state ? this.props.location.state.alertIcon : '',
 			alertMessage: this.props.location.state ? this.props.location.state.alertMessage : '',
-			name: this.props.location.state ? this.props.location.state.name : '',
 			unitData: []
 		};
+		// console.log(this.state.data);
 		this.dismiss = this.dismiss.bind(this);
 	}
 
@@ -32,7 +31,12 @@ class DisciplinesDetails extends React.Component {
 		if (this.state.loginStatus === undefined) {
 			userLoginStatus().then(
 				(value) => {
-					this._fetchListData();
+					this.setState({
+						loginStatus: true,
+						listItems: true,
+						loading: false
+					});
+					// this._fetchListData();
 				},
 				(reason) => {
 					this.setState({ loginStatus: false });
@@ -40,20 +44,6 @@ class DisciplinesDetails extends React.Component {
 			);
 		}
 	}
-
-	_fetchListData = () => {
-		APIService.fetchAllDisciplines().then(
-			(units) => {
-				this.setState({
-					loginStatus: true,
-					listItems: true,
-					loading: false,
-					unitData: units
-				});
-			},
-			(error) => this.setState({ internetConnected: false })
-		);
-	};
 
 	dismiss() {
 		this.setState({ visible: false });
@@ -93,11 +83,11 @@ class DisciplinesDetails extends React.Component {
 						</Alert>
 					</Container>
 					<Container fluid className="main-content-container px-4">
-						<MainTitle title="Discipline" />
+						<MainTitle title="Customer" />
 						<Row>
 							<Col>
 								<Card small className="mb-4">
-									<ContentHeader title="Discipline Details">
+									<ContentHeader title="Customer Details">
 										<Button
 											outline
 											theme="primary"
@@ -105,7 +95,7 @@ class DisciplinesDetails extends React.Component {
 											onClick={() =>
 												this.setState({
 													redirect: true,
-													redirectPath: '/disciplines'
+													redirectPath: '/users'
 												})
 											}
 										>
@@ -118,13 +108,35 @@ class DisciplinesDetails extends React.Component {
 												<thead className="bg-light">
 													<tr>
 														<th scope="col" className="border-0">
-															Discipline Name
+															Customer Name
+														</th>
+														<th scope="col" className="border-0">
+															Email
+														</th>
+														<th scope="col" className="border-0">
+															Phone
+														</th>
+														<th scope="col" className="border-0">
+															Country
+														</th>
+														<th scope="col" className="border-0">
+															State
+														</th>
+														<th scope="col" className="border-0">
+															City
 														</th>
 													</tr>
 												</thead>
 												<tbody>
 													<tr>
-														<td>{this.state.name}</td>
+														<td>
+															{this.state.data.first_name} {this.state.data.last_name}
+														</td>
+														<td>{this.state.data.email}</td>
+														<td>{this.state.data.phone}</td>
+														<td>{this.state.data.countries.name}</td>
+														<td>{this.state.data.states.name}</td>
+														<td>{this.state.data.cities.name}</td>
 													</tr>
 												</tbody>
 											</table>
@@ -142,4 +154,4 @@ class DisciplinesDetails extends React.Component {
 	}
 }
 
-export default DisciplinesDetails;
+export default UserDetails;
