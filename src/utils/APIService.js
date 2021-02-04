@@ -1,5 +1,4 @@
 import { authHeader } from './authHeader';
-import { authHeaderStore } from './authHeaderStore';
 import config from './../data/config';
 // import queryString from 'query-string';
 // import axios from 'axios';

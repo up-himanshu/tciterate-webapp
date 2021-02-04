@@ -20,7 +20,6 @@ import ProjectDetail from './views/Projects/detail';
 
 import TestCases from './views/TestCases/list';
 import AddTestCase from './views/TestCases/addEdit';
-import TestCaseDetail from './views/TestCases/detail';
 
 import Executions from './views/Executions/list';
 import AddExecution from './views/Executions/addEdit';

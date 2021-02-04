@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Row, Col, Card, CardBody, Button, Alert, ButtonGroup } from 'shards-react';
+import { Container, Row, Col, Card, CardBody, Button, Alert, ButtonGroup, Form } from 'shards-react';
 import MainTitle from '../../components/common/MainTitle';
 import ContentHeader from '../../components/common/ContentHeader';
 import Loader from '../../components/Loader/Loader';
@@ -8,7 +8,7 @@ import { APIService } from '../../utils/APIService';
 import userLoginStatus from '../../utils/userLoginStatus';
 // import { ButtonGroup } from '@material-ui/core';
 
-class UserDetails extends React.Component {
+class Common extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -29,6 +29,7 @@ class UserDetails extends React.Component {
 		};
 		// console.log(this.state);
 		this.dismiss = this.dismiss.bind(this);
+		this.renderRow = this.renderRow.bind(this);
 	}
 
 	componentDidMount() {
@@ -63,19 +64,14 @@ class UserDetails extends React.Component {
 		this.setState({ visible: false });
 	}
 
-	handleClick(status) {
-		console.log('mark ' + status);
-		if (status == 'passed') {
-			//make api call
-		} else {
-			//display popup to capture actual results
-		}
-	}
+	handleClick = (status) => {
+		console.log(status);
+	};
 
 	renderExecutionStatus(stats) {
 		return (
 			<>
-				<MainTitle title="Test Case Name">
+				<MainTitle title={stats.name}>
 					<Button outline theme="primary">
 						Exit
 					</Button>
@@ -126,9 +122,13 @@ class UserDetails extends React.Component {
 		);
 	}
 
+	_setUpdateParamstoState = (object) => {};
+	_setUpdateParamstoStateforImage = (inventory_id) => {};
+	_handleDelete(id) {}
+
 	renderRow(item) {
 		return (
-			<tr>
+			<tr key={item.id.toString()}>
 				<td>{item.id}</td>
 				<td>{item.test_case.title}</td>
 				<td>{item.test_case.description}</td>
@@ -136,48 +136,31 @@ class UserDetails extends React.Component {
 				<td>{item.actual_results}</td>
 				<td>
 					<ButtonGroup>
-						{item.status == 'unexecuted' ? (
-							<Button
-								theme="secondary"
-								onClick={(e) => {
-									this.handleClick();
-								}}
-							>
-								Not Run
-							</Button>
+						{item.status === 'unexecuted' ? (
+							<Button theme="secondary">Not Run</Button>
 						) : (
-							<Button
-								theme="secondary"
-								outline
-								onClick={(e) => {
-									this.handleClick.bind(this);
-								}}
-							>
+							<Button theme="secondary" outline onClick={() => this.handleClick('unexecuted')}>
 								Not Run
 							</Button>
 						)}
-						{item.status == 'passed' ? (
-							<Button theme="success" onClick={() => this.handleClick('passed')}>
+						{item.status === 'passed' ? (
+							<Button theme="success" type="submit">
 								Pass
 							</Button>
 						) : (
-							<Button theme="success" outline onClick={() => this.handleClick('passed')}>
+							<Button theme="success" outline type="submit" onClick={() => this.handleClick('passed')}>
 								Pass
 							</Button>
 						)}
-						{item.status == 'failed' ? (
-							<Button theme="danger" onClick={() => this.handleClick('failed')}>
-								Fail
-							</Button>
+						{item.status === 'failed' ? (
+							<Button theme="danger">Fail</Button>
 						) : (
 							<Button theme="danger" outline onClick={() => this.handleClick('failed')}>
 								Fail
 							</Button>
 						)}
-						{item.status == 'blocked' ? (
-							<Button theme="info" onClick={() => this.handleClick('blocked')}>
-								Block
-							</Button>
+						{item.status === 'blocked' ? (
+							<Button theme="info">Block</Button>
 						) : (
 							<Button theme="info" outline onClick={() => this.handleClick('blocked')}>
 								Block
@@ -271,4 +254,4 @@ class UserDetails extends React.Component {
 	}
 }
 
-export default UserDetails;
+export default Common;
