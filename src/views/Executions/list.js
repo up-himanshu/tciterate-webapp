@@ -43,7 +43,7 @@ class Common extends React.Component {
 	}
 
 	_fetchListData = () => {
-		APIService.fetchProjectTestCases(this.state.project_id).then(
+		APIService.fetchProjectExecutions(this.state.project_id).then(
 			(units) => {
 				this.setState({
 					loginStatus: true,
@@ -117,8 +117,18 @@ class Common extends React.Component {
 				<div>
 					<Container fluid className="px-4 py-4">
 						<ButtonGroup className="mb-3">
-							<Button theme="primary">Test Cases</Button>
-							<Button theme="white">Executions</Button>
+							<Button
+								theme="white"
+								onClick={() =>
+									this.setState({
+										redirect: true,
+										redirectPath: '/projects/' + this.state.project_id + '/testcases'
+									})
+								}
+							>
+								Test Cases
+							</Button>
+							<Button theme="primary">Executions</Button>
 						</ButtonGroup>
 					</Container>
 					<Container fluid className="px-0">
@@ -171,9 +181,13 @@ class Common extends React.Component {
 												title="Test Cases"
 												columns={[
 													{ title: 'ID', field: 'id' },
-													{ title: 'Title', field: 'title' },
-													{ title: 'Description', field: 'description' },
-													{ title: 'Expected Results', field: 'expected_results' }
+													{ title: 'Name', field: 'name' },
+													{ title: 'Type', field: 'type' },
+													{ title: 'Unexecuted', field: 'unexecuted' },
+													{ title: 'Passed', field: 'passed' },
+													{ title: 'Failed', field: 'failed' },
+													{ title: 'Blocked', field: 'blocked' },
+													{ title: 'Total', field: 'total' }
 												]}
 												data={this.state.listData}
 												options={{
@@ -181,42 +195,19 @@ class Common extends React.Component {
 													actionsColumnIndex: -1
 												}}
 												actions={[
-													// {
-													// 	icon: 'edit',
-													// 	tooltip: 'User Edit',
-													// 	onClick: (event, rowData) => {
-													// 		this.setState({
-													// 			redirect: true,
-													// 			redirectPath: '/projects/' + rowData.id + '/edit',
-													// 			redirectData: {
-													// 				data: rowData,
-													// 				id: rowData.id,
-													// 				update: true,
-													// 				first_name: rowData.first_name,
-													// 				last_name: rowData.last_name,
-													// 				email: rowData.email,
-													// 				city: rowData.city,
-													// 				country: rowData.country,
-													// 				state: rowData.state,
-													// 				phone: rowData.phone,
-													// 				zip_code: rowData.zip_code,
-													// 				address_1: rowData.address_1,
-													// 				role_type: rowData.role_type
-													// 			}
-													// 		});
-													// 	}
-													// },
 													{
-														icon: 'delete',
-														tooltip: 'Delete User',
+														icon: 'visibility',
+														tooltip: 'User Details',
 														onClick: (event, rowData) => {
-															if (
-																window.confirm(
-																	'Are you sure, you want to permanently delete this record?'
-																)
-															) {
-																this._handleDelete(rowData.id);
-															}
+															this.setState({
+																redirect: true,
+																redirectPath:
+																	'/projects/' +
+																	this.state.project_id +
+																	'/executions/' +
+																	rowData.id,
+																redirectData: { data: rowData }
+															});
 														}
 													}
 												]}

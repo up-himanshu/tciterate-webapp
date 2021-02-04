@@ -168,13 +168,13 @@ function deleteProjectTestCase(id) {
 		});
 }
 
-async function fetchProjectExecutions() {
+async function fetchProjectExecutions(project_id) {
 	const requestOptions = {
 		method: 'GET',
 		headers: authHeader()
 	};
 
-	return fetch(baseUrl + config.endpoints.executions, requestOptions)
+	return fetch(baseUrl + config.endpoints.executions + project_id, requestOptions)
 		.then(_handleResponse)
 		.then((data) => {
 			return data;
@@ -209,7 +209,7 @@ async function fetchExecutionResults(execution_id) {
 
 function updateExecutionResult(id, body) {
 	const requestOptions = {
-		method: 'POST',
+		method: 'PUT',
 		headers: authHeader(),
 		body: JSON.stringify(body)
 	};
