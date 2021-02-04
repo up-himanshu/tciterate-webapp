@@ -181,13 +181,13 @@ async function fetchProjectExecutions(project_id) {
 		});
 }
 
-function addProjectExecution(body) {
+function addProjectExecution(project_id, body) {
 	const requestOptions = {
 		method: 'POST',
 		headers: authHeader(),
 		body: JSON.stringify(body)
 	};
-	return fetch(baseUrl + config.endpoints.executions, requestOptions)
+	return fetch(baseUrl + config.endpoints.executions + project_id, requestOptions)
 		.then(_handleResponse)
 		.then((data) => {
 			return data;
