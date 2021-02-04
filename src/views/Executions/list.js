@@ -168,11 +168,11 @@ class Common extends React.Component {
 												this.setState({
 													redirect: true,
 													redirectPath:
-														'/projects/' + this.state.project_id + '/testcases/new'
+														'/projects/' + this.state.project_id + '/executions/new'
 												})
 											}
 										>
-											Add New Test Case
+											Add New Execution
 										</Button>
 									</ContentHeader>
 									<CardBody className="p-0 pb-3">

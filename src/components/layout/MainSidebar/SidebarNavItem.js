@@ -4,7 +4,6 @@ import { NavLink as RouteNavLink } from 'react-router-dom';
 import { NavItem, NavLink } from 'shards-react';
 
 const SidebarNavItem = ({ item }) => {
-	console.log(JSON.stringify(item));
 	return (
 		<NavItem>
 			<NavLink tag={RouteNavLink} to={item.to}>

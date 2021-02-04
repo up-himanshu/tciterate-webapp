@@ -1,5 +1,17 @@
 import React from 'react';
-import { Container, Row, Col, Card, CardBody, Button, Alert, ButtonGroup, Form } from 'shards-react';
+import {
+	Container,
+	Row,
+	Col,
+	Card,
+	CardBody,
+	Button,
+	Alert,
+	ButtonGroup,
+	Modal,
+	ModalBody,
+	ModalHeader
+} from 'shards-react';
 import MainTitle from '../../components/common/MainTitle';
 import ContentHeader from '../../components/common/ContentHeader';
 import Loader from '../../components/Loader/Loader';
@@ -65,14 +77,27 @@ class Common extends React.Component {
 	}
 
 	handleClick = (status) => {
-		console.log(status);
+		if (status === 'passed' || status === 'unexecuted') {
+			//make api call
+		} else {
+			//show popup for actual_results
+		}
 	};
 
 	renderExecutionStatus(stats) {
 		return (
 			<>
 				<MainTitle title={stats.name}>
-					<Button outline theme="primary">
+					<Button
+						outline
+						theme="primary"
+						onClick={() =>
+							this.setState({
+								redirect: true,
+								redirectPath: '/projects/' + this.state.project_id + '/executions'
+							})
+						}
+					>
 						Exit
 					</Button>
 				</MainTitle>

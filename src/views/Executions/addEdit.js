@@ -11,6 +11,7 @@ import {
 	// ButtonGroup,
 	Form,
 	FormInput,
+	FormCheckbox,
 	Alert
 } from 'shards-react';
 // import PageTitle from '../../components/common/PageTitle';
@@ -230,48 +231,17 @@ class AddEditUser extends React.Component {
 			<Form onSubmit={this.state.update ? this._handleSubmitUpdate : this._handleSubmitAdd}>
 				<Row form>
 					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
-						<label htmlFor="feTitle">Test Case Title*</label>
+						<label htmlFor="feName">Name*</label>
 						<FormInput
-							id="feTitle"
+							id="feName"
 							type="text"
-							placeholder="Title that explain the test case in one line"
-							name="title"
+							placeholder="Execution Name"
+							name="name"
 							onChange={(e) => {
-								this.setState({ title: e.target.value });
-								this.value = this.state.title;
+								this.setState({ name: e.target.value });
+								this.value = this.state.name;
 							}}
-							value={this.state.title}
-						/>
-					</Col>
-				</Row>
-
-				<Row form>
-					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
-						<label htmlFor="feDescription">Description</label>
-						<FormTextarea
-							id="feDescription"
-							rows="10"
-							placeholder="Precondition, steps, test case type, etc."
-							name="description"
-							onChange={(e) => {
-								this.setState({ description: e.target.value });
-								this.value = this.state.description;
-							}}
-							value={this.state.description}
-						/>
-					</Col>
-					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
-						<label htmlFor="feExpectedResults">Expected Results*</label>
-						<FormTextarea
-							id="feExpectedResults"
-							rows="10"
-							placeholder="Expected Results"
-							name="expected_results"
-							onChange={(e) => {
-								this.setState({ expected_results: e.target.value });
-								this.value = this.state.expected_results;
-							}}
-							value={this.state.expected_results}
+							value={this.state.name}
 						/>
 					</Col>
 				</Row>
@@ -279,9 +249,9 @@ class AddEditUser extends React.Component {
 				<Row form>
 					<Col sm={{ size: 6, order: 6, offset: 5 }}>
 						{this.state.update ? (
-							<Button type="submit">Update Test Case</Button>
+							<Button type="submit">Update Execution</Button>
 						) : (
-							<Button type="submit">Add Test Case</Button>
+							<Button type="submit">Add Execution</Button>
 						)}
 					</Col>
 				</Row>
