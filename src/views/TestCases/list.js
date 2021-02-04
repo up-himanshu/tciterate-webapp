@@ -118,7 +118,17 @@ class Common extends React.Component {
 					<Container fluid className="px-4 py-4">
 						<ButtonGroup className="mb-3">
 							<Button theme="primary">Test Cases</Button>
-							<Button theme="white">Executions</Button>
+							<Button
+								theme="white"
+								onClick={() =>
+									this.setState({
+										redirect: true,
+										redirectPath: '/projects/' + this.state.project_id + '/executions'
+									})
+								}
+							>
+								Executions
+							</Button>
 						</ButtonGroup>
 					</Container>
 					<Container fluid className="px-0">

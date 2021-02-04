@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Row, Col, Card, CardBody, Button, Alert } from 'shards-react';
+import { Container, Row, Col, Card, CardBody, Button, Alert, ButtonGroup } from 'shards-react';
 import MainTitle from '../../components/common/MainTitle';
 import ContentHeader from '../../components/common/ContentHeader';
 import Loader from '../../components/Loader/Loader';
@@ -9,7 +9,7 @@ import userLoginStatus from '../../utils/userLoginStatus';
 
 import MaterialTable from 'material-table';
 
-class Users extends React.Component {
+class Common extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -19,11 +19,12 @@ class Users extends React.Component {
 			loading: false,
 			listItems: false,
 			internetConnected: true,
+			project_id: this.props.match.params.project_id,
 			visible: this.props.location.state ? this.props.location.state.visible : false,
 			alertStyle: this.props.location.state ? this.props.location.state.alertStyle : '',
 			alertIcon: this.props.location.state ? this.props.location.state.alertIcon : '',
 			alertMessage: this.props.location.state ? this.props.location.state.alertMessage : '',
-			unitData: []
+			listData: []
 		};
 		this.dismiss = this.dismiss.bind(this);
 	}
@@ -42,13 +43,13 @@ class Users extends React.Component {
 	}
 
 	_fetchListData = () => {
-		APIService.fetchAllUsers().then(
+		APIService.fetchProjectTestCases(this.state.project_id).then(
 			(units) => {
 				this.setState({
 					loginStatus: true,
 					listItems: true,
 					loading: false,
-					unitData: units
+					listData: units
 				});
 			},
 			(error) => this.setState({ internetConnected: false })
@@ -56,7 +57,7 @@ class Users extends React.Component {
 	};
 
 	_handleDelete(id) {
-		APIService.deleteUser(id).then(
+		APIService.deleteProjectTestCase(id).then(
 			() => {
 				this.setState({
 					listItems: true,
@@ -114,18 +115,37 @@ class Users extends React.Component {
 		} else if (loginStatus) {
 			return (
 				<div>
+					<Container fluid className="px-4 py-4">
+						<ButtonGroup className="mb-3">
+							<Button theme="primary">Test Cases</Button>
+							<Button theme="white">Executions</Button>
+						</ButtonGroup>
+					</Container>
 					<Container fluid className="px-0">
-						<Alert
-							theme={this.state.alertStyle || 'primary'}
-							dismissible={this.dismiss}
-							open={this.state.visible}
-							className="mb-0"
-						>
-							<i className={this.state.alertIcon} /> {this.state.alertMessage}
-						</Alert>
+						{this.state.alertMessage && (
+							<Alert
+								theme={this.state.alertStyle || 'primary'}
+								dismissible={this.dismiss}
+								open={this.state.visible}
+								className="mb-0"
+							>
+								<i className={this.state.alertIcon} /> {this.state.alertMessage}
+							</Alert>
+						)}
 					</Container>
 					<Container fluid className="main-content-container px-4">
-						<MainTitle title="Customer Section" />
+						<MainTitle title="Project Test Cases">
+							<Button
+								onClick={() =>
+									this.setState({
+										redirect: true,
+										redirectPath: '/projects'
+									})
+								}
+							>
+								Change Project
+							</Button>
+						</MainTitle>
 						<Row>
 							<Col>
 								<Card small className="mb-4">
@@ -137,75 +157,55 @@ class Users extends React.Component {
 											onClick={() =>
 												this.setState({
 													redirect: true,
-													redirectPath: '/users/new'
+													redirectPath:
+														'/projects/' + this.state.project_id + '/testcases/new'
 												})
 											}
 										>
-											Add Customer
+											Add New Test Case
 										</Button>
 									</ContentHeader>
 									<CardBody className="p-0 pb-3">
 										<CardBody className="p-0 pb-3">
 											<MaterialTable
-												title="Customers"
+												title="Test Cases"
 												columns={[
 													{ title: 'ID', field: 'id' },
-													{ title: 'Customer Name', field: 'first_name' },
-													{ title: 'Email', field: 'email' },
-													{ title: 'Phone', field: 'phone' },
-													{ title: 'User Role', field: 'user_roles.name' }
+													{ title: 'Title', field: 'title' },
+													{ title: 'Description', field: 'description' },
+													{ title: 'Expected Results', field: 'expected_results' }
 												]}
-												data={this.state.unitData}
+												data={this.state.listData}
 												options={{
 													search: true,
 													actionsColumnIndex: -1
 												}}
 												actions={[
-													{
-														icon: 'visibility',
-														tooltip: 'User Details',
-														onClick: (event, rowData) => {
-															this.setState({
-																redirect: true,
-																redirectPath: '/users/' + rowData.id,
-																redirectData: { data: rowData }
-															});
-														}
-													},
-													{
-														icon: 'edit',
-														tooltip: 'User Edit',
-														onClick: (event, rowData) => {
-															this.setState({
-																redirect: true,
-																redirectPath: '/users/' + rowData.id + '/edit',
-																redirectData: {
-																	data: rowData,
-																	id: rowData.id,
-																	update: true,
-																	first_name: rowData.first_name,
-																	last_name: rowData.last_name,
-																	email: rowData.email,
-																	city: rowData.city,
-																	country: rowData.country,
-																	state: rowData.state,
-																	phone: rowData.phone,
-																	zip_code: rowData.zip_code,
-																	address_1: rowData.address_1,
-																	role_type: rowData.role_type
-																}
-															});
-														}
-													},
-													(rowData) => ({
-														icon: rowData.status ? 'check' : 'cancel',
-														tooltip: rowData.status ? 'Activate' : 'Deactivate',
-														onClick: (event, rowData) => {
-															if (window.confirm('are you sure?')) {
-																this._handleStatus(rowData.id);
-															}
-														}
-													}),
+													// {
+													// 	icon: 'edit',
+													// 	tooltip: 'User Edit',
+													// 	onClick: (event, rowData) => {
+													// 		this.setState({
+													// 			redirect: true,
+													// 			redirectPath: '/projects/' + rowData.id + '/edit',
+													// 			redirectData: {
+													// 				data: rowData,
+													// 				id: rowData.id,
+													// 				update: true,
+													// 				first_name: rowData.first_name,
+													// 				last_name: rowData.last_name,
+													// 				email: rowData.email,
+													// 				city: rowData.city,
+													// 				country: rowData.country,
+													// 				state: rowData.state,
+													// 				phone: rowData.phone,
+													// 				zip_code: rowData.zip_code,
+													// 				address_1: rowData.address_1,
+													// 				role_type: rowData.role_type
+													// 			}
+													// 		});
+													// 	}
+													// },
 													{
 														icon: 'delete',
 														tooltip: 'Delete User',
@@ -235,4 +235,4 @@ class Users extends React.Component {
 	}
 }
 
-export default Users;
+export default Common;

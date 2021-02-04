@@ -6,6 +6,7 @@ import {
 	Card,
 	// CardHeader,
 	CardBody,
+	FormTextarea,
 	Button,
 	// ButtonGroup,
 	Form,
@@ -33,6 +34,7 @@ class AddEditUser extends React.Component {
 			listItems: false,
 			internetConnected: true,
 			visible: false,
+			project_id: this.props.match.params.project_id,
 			first_name: this.props.location.state ? this.props.location.state.first_name : '',
 			last_name: this.props.location.state ? this.props.location.state.last_name : '',
 			email: this.props.location.state ? this.props.location.state.email : '',
@@ -134,24 +136,23 @@ class AddEditUser extends React.Component {
 		e.preventDefault();
 		this.setState({ loading: true });
 		// const { firstName, lastName } = this.state;
-		// console.log(this.state);
-		APIService.addUser(this.state).then(
+		console.log('this.state.project_id', this.state.project_id);
+		APIService.addProjectTestCase(this.state.project_id, this.state).then(
 			(unit) => {
 				this.setState({
 					success: true,
 					loading: false,
 					redirect: true,
-					redirectPath: '/users',
+					redirectPath: '/projects/' + this.state.project_id + '/testcases',
 					redirectData: {
 						visible: true,
 						alertStyle: 'success',
 						alertIcon: 'fa fa-check mx-2',
-						alertMessage: 'User added successfully.'
+						alertMessage: 'Test Case added successfully.'
 					}
 				});
 			},
 			(error) => {
-				alert(JSON.stringify(error, null, 2));
 				this.setState({
 					success: false,
 					loading: false,
@@ -224,43 +225,64 @@ class AddEditUser extends React.Component {
 		);
 	};
 
-	_renderForm(selectCountry, selectState, selectCity) {
+	_renderForm() {
 		return (
 			<Form onSubmit={this.state.update ? this._handleSubmitUpdate : this._handleSubmitAdd}>
 				<Row form>
 					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
-						<label htmlFor="feEmail">Email</label>
+						<label htmlFor="feTitle">Test Case Title*</label>
 						<FormInput
-							id="feEmail"
-							type="email"
-							placeholder="Email"
-							name="email"
+							id="feTitle"
+							type="text"
+							placeholder="Title that explain the test case in one line"
+							name="title"
 							onChange={(e) => {
-								this.setState({ email: e.target.value });
-								this.value = this.state.email;
+								this.setState({ title: e.target.value });
+								this.value = this.state.title;
 							}}
-							value={this.state.email}
+							value={this.state.title}
+						/>
+					</Col>
+				</Row>
+
+				<Row form>
+					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
+						<label htmlFor="feDescription">Description</label>
+						<FormTextarea
+							id="feDescription"
+							rows="10"
+							placeholder="Precondition, steps, test case type, etc."
+							name="description"
+							onChange={(e) => {
+								this.setState({ description: e.target.value });
+								this.value = this.state.description;
+							}}
+							value={this.state.description}
 						/>
 					</Col>
 					<Col md={{ size: 6, order: 6 }} className="form-group p-3">
-						<label htmlFor="fePassword">Password</label>
-						<FormInput
-							id="fePassword"
-							type="password"
-							placeholder="Password"
-							name="password"
+						<label htmlFor="feExpectedResults">Expected Results*</label>
+						<FormTextarea
+							id="feExpectedResults"
+							rows="10"
+							placeholder="Expected Results"
+							name="expected_results"
 							onChange={(e) => {
-								this.setState({ password: e.target.value });
-								this.value = this.state.password;
+								this.setState({ expected_results: e.target.value });
+								this.value = this.state.expected_results;
 							}}
-							value={this.state.password}
+							value={this.state.expected_results}
 						/>
 					</Col>
 				</Row>
 
 				<Row form>
 					<Col sm={{ size: 6, order: 6, offset: 5 }}>
-						{this.state.update ? <Button type="submit">Update</Button> : <Button type="submit">Add</Button>}
+						{this.state.update ? (
+							<Button type="submit">Update Test Case</Button>
+						) : (
+							<Button type="submit">Add Test Case</Button>
+						)}
 					</Col>
 				</Row>
 			</Form>
@@ -272,9 +294,6 @@ class AddEditUser extends React.Component {
 		this.renderCountry = this.renderCountry.bind(this);
 		this.renderState = this.renderState.bind(this);
 		this.renderCity = this.renderCity.bind(this);
-		const selectCountry = this.state.countries.length > 0 && this.state.countries.map(this.renderCountry);
-		const selectState = this.state.states.length > 0 && this.state.states.map(this.renderState);
-		const selectCity = this.state.cities.length > 0 && this.state.cities.map(this.renderCity);
 		if (this.state.redirect) {
 			return (
 				<Redirect
@@ -307,11 +326,11 @@ class AddEditUser extends React.Component {
 						</Alert>
 					</Container>
 					<Container fluid className="main-content-container px-4">
-						<MainTitle title="Customers" />
+						<MainTitle title="Test Cases" />
 						<Row>
 							<Col>
 								<Card small className="mb-4">
-									<ContentHeader title={this.state.update ? 'Edit Customer' : 'Add Customer'}>
+									<ContentHeader title={this.state.update ? 'Edit Test Case' : 'Add Test Case'}>
 										<Button
 											outline
 											theme="primary"
@@ -332,9 +351,7 @@ class AddEditUser extends React.Component {
 											Back
 										</Button>
 									</ContentHeader>
-									<CardBody className="p-0 pb-3">
-										{this._renderForm(selectCountry, selectState, selectCity)}
-									</CardBody>
+									<CardBody className="p-0 pb-3">{this._renderForm()}</CardBody>
 								</Card>
 							</Col>
 						</Row>
