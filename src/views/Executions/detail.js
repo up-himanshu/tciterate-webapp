@@ -32,6 +32,7 @@ class Common extends React.Component {
 			internetConnected: true,
 			project_id: this.props.match.params.project_id,
 			execution_id: this.props.match.params.execution_id,
+			actual_results: '',
 			data: this.props.location.state ? this.props.location.state.data : '',
 			visible: this.props.location.state ? this.props.location.state.visible : false,
 			alertStyle: this.props.location.state ? this.props.location.state.alertStyle : '',
@@ -76,13 +77,31 @@ class Common extends React.Component {
 		this.setState({ visible: false });
 	}
 
-	handleClick = (status) => {
+	handleClick = (id, status) => {
 		if (status === 'passed' || status === 'unexecuted') {
+			console.log('make api call');
+			this.markExecution(id, status);
 			//make api call
 		} else {
+			console.log('show popup for actual_results');
 			//show popup for actual_results
 		}
 	};
+
+	markExecution(id, status) {
+		this.setState({ loading: true });
+		let { actual_results } = this.state;
+		console.log(status);
+		APIService.updateExecutionResult(id, { status, actual_results }).then(
+			(data) => {
+				this._fetchListData();
+			},
+			(error) => {
+				alert(error.errorMessage);
+				this.setState({ loading: false });
+			}
+		);
+	}
 
 	renderExecutionStatus(stats) {
 		return (
@@ -147,10 +166,6 @@ class Common extends React.Component {
 		);
 	}
 
-	_setUpdateParamstoState = (object) => {};
-	_setUpdateParamstoStateforImage = (inventory_id) => {};
-	_handleDelete(id) {}
-
 	renderRow(item) {
 		return (
 			<tr key={item.id.toString()}>
@@ -164,7 +179,7 @@ class Common extends React.Component {
 						{item.status === 'unexecuted' ? (
 							<Button theme="secondary">Not Run</Button>
 						) : (
-							<Button theme="secondary" outline onClick={() => this.handleClick('unexecuted')}>
+							<Button theme="secondary" outline onClick={() => this.handleClick(item.id, 'unexecuted')}>
 								Not Run
 							</Button>
 						)}
@@ -173,21 +188,26 @@ class Common extends React.Component {
 								Pass
 							</Button>
 						) : (
-							<Button theme="success" outline type="submit" onClick={() => this.handleClick('passed')}>
+							<Button
+								theme="success"
+								outline
+								type="submit"
+								onClick={() => this.handleClick(item.id, 'passed')}
+							>
 								Pass
 							</Button>
 						)}
 						{item.status === 'failed' ? (
 							<Button theme="danger">Fail</Button>
 						) : (
-							<Button theme="danger" outline onClick={() => this.handleClick('failed')}>
+							<Button theme="danger" outline onClick={() => this.handleClick(item.id, 'failed')}>
 								Fail
 							</Button>
 						)}
 						{item.status === 'blocked' ? (
 							<Button theme="info">Block</Button>
 						) : (
-							<Button theme="info" outline onClick={() => this.handleClick('blocked')}>
+							<Button theme="info" outline onClick={() => this.handleClick(item.id, 'blocked')}>
 								Block
 							</Button>
 						)}
