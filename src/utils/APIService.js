@@ -17,7 +17,8 @@ export const APIService = {
 	fetchProjectExecutions,
 	addProjectExecution,
 	fetchExecutionResults,
-	updateExecutionResult
+	updateExecutionResult,
+	dashboardStats
 };
 
 const baseUrl =
@@ -216,6 +217,19 @@ function updateExecutionResult(id, body) {
 		.then(_handleResponse)
 		.then((data) => {
 			return data;
+		});
+}
+
+function dashboardStats() {
+	const requestOptions = {
+		method: 'GET',
+		headers: authHeader()
+	};
+
+	return fetch(baseUrl + config.endpoints.stats, requestOptions)
+		.then(_handleResponse)
+		.then((stats) => {
+			return stats;
 		});
 }
 

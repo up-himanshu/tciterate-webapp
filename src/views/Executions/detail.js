@@ -8,6 +8,9 @@ import {
 	Button,
 	Alert,
 	ButtonGroup,
+	Form,
+	FormTextarea,
+	FormInput,
 	Modal,
 	ModalBody,
 	ModalHeader
@@ -18,6 +21,7 @@ import Loader from '../../components/Loader/Loader';
 import { Redirect } from 'react-router-dom';
 import { APIService } from '../../utils/APIService';
 import userLoginStatus from '../../utils/userLoginStatus';
+import { Input } from '@material-ui/core';
 // import { ButtonGroup } from '@material-ui/core';
 
 class Common extends React.Component {
@@ -38,11 +42,13 @@ class Common extends React.Component {
 			alertStyle: this.props.location.state ? this.props.location.state.alertStyle : '',
 			alertIcon: this.props.location.state ? this.props.location.state.alertIcon : '',
 			alertMessage: this.props.location.state ? this.props.location.state.alertMessage : '',
-			listData: []
+			listData: [],
+			openModal: false
 		};
 		// console.log(this.state);
 		this.dismiss = this.dismiss.bind(this);
 		this.renderRow = this.renderRow.bind(this);
+		this.toggleModal = this.toggleModal.bind(this);
 	}
 
 	componentDidMount() {
@@ -66,7 +72,8 @@ class Common extends React.Component {
 					listItems: true,
 					loading: false,
 					stats: data,
-					listData: data.test_cases
+					listData: data.test_cases,
+					openModal: false
 				});
 			},
 			(error) => this.setState({ internetConnected: false })
@@ -77,13 +84,17 @@ class Common extends React.Component {
 		this.setState({ visible: false });
 	}
 
-	handleClick = (id, status) => {
+	handleClick = (e, id, status) => {
+		e.preventDefault();
+		let { failingTCId } = this.state;
 		if (status === 'passed' || status === 'unexecuted') {
-			console.log('make api call');
 			this.markExecution(id, status);
-			//make api call
 		} else {
-			console.log('show popup for actual_results');
+			console.log(failingTCId);
+			// if (status == 'blocked') {
+			// 	this.setState({ actual_results: 'Blocked as testcase #' + failingTCId + 'failed.' });
+			// }
+			this.markExecution(id, status);
 			//show popup for actual_results
 		}
 	};
@@ -169,7 +180,7 @@ class Common extends React.Component {
 	renderRow(item) {
 		return (
 			<tr key={item.id.toString()}>
-				<td>{item.id}</td>
+				<td>{item.test_case.id}</td>
 				<td>{item.test_case.title}</td>
 				<td>{item.test_case.description}</td>
 				<td>{item.test_case.expected_results}</td>
@@ -179,7 +190,11 @@ class Common extends React.Component {
 						{item.status === 'unexecuted' ? (
 							<Button theme="secondary">Not Run</Button>
 						) : (
-							<Button theme="secondary" outline onClick={() => this.handleClick(item.id, 'unexecuted')}>
+							<Button
+								theme="secondary"
+								outline
+								onClick={(e) => this.handleClick(e, item.id, 'unexecuted')}
+							>
 								Not Run
 							</Button>
 						)}
@@ -192,7 +207,7 @@ class Common extends React.Component {
 								theme="success"
 								outline
 								type="submit"
-								onClick={() => this.handleClick(item.id, 'passed')}
+								onClick={(e) => this.handleClick(e, item.id, 'passed')}
 							>
 								Pass
 							</Button>
@@ -200,14 +215,38 @@ class Common extends React.Component {
 						{item.status === 'failed' ? (
 							<Button theme="danger">Fail</Button>
 						) : (
-							<Button theme="danger" outline onClick={() => this.handleClick(item.id, 'failed')}>
+							<Button
+								theme="danger"
+								outline
+								onClick={() => {
+									this.setState({
+										actual_results: '',
+										failingTCId: '',
+										status: 'failed',
+										tcId: item.id
+									});
+									this.toggleModal();
+								}}
+							>
 								Fail
 							</Button>
 						)}
 						{item.status === 'blocked' ? (
 							<Button theme="info">Block</Button>
 						) : (
-							<Button theme="info" outline onClick={() => this.handleClick(item.id, 'blocked')}>
+							<Button
+								theme="info"
+								outline
+								onClick={() => {
+									this.setState({
+										actual_results: '',
+										failingTCId: '',
+										status: 'blocked',
+										tcId: item.id
+									});
+									this.toggleModal();
+								}}
+							>
 								Block
 							</Button>
 						)}
@@ -217,8 +256,22 @@ class Common extends React.Component {
 		);
 	}
 
+	toggleModal() {
+		this.setState({
+			openModal: !this.state.openModal
+		});
+	}
+
 	render() {
-		let { listData, stats } = this.state;
+		let { listData, stats, openModal, status, tcId } = this.state;
+		listData.sort(function (a, b) {
+			var keyA = a.test_case.id,
+				keyB = b.test_case.id;
+			// Compare the 2 dates
+			if (keyA < keyB) return -1;
+			if (keyA > keyB) return 1;
+			return 0;
+		});
 		let tableBody = listData.length && listData.map(this.renderRow);
 		const { loginStatus, loading, internetConnected } = this.state;
 		if (this.state.redirect) {
@@ -242,6 +295,44 @@ class Common extends React.Component {
 		} else if (loginStatus) {
 			return (
 				<div>
+					<Modal open={openModal} toggle={this.toggleModal}>
+						<ModalHeader>Mark Execution</ModalHeader>
+						<Form onSubmit={(e) => this.handleClick(e, tcId, status)}>
+							<ModalBody>
+								{status == 'failed' ? (
+									<FormTextarea
+										id="feActualResults"
+										rows="5"
+										placeholder="Actual results or Test case id of the failing testcase ."
+										name="actual_results"
+										onChange={(e) => {
+											this.setState({ actual_results: e.target.value });
+											this.value = this.state.actual_results;
+										}}
+										value={this.state.actual_results}
+									/>
+								) : (
+									<FormInput
+										id="feFailingTestCase"
+										type="number"
+										placeholder="ID of the failing test case."
+										name="failingTCId"
+										onChange={(e) => {
+											this.setState({
+												failingTCId: e.target.value,
+												actual_results: 'Blocked fue to a failing testcase #' + e.target.value
+											});
+											this.value = this.state.failingTCId;
+										}}
+										value={this.state.failingTCId}
+									/>
+								)}
+								<Button type="submit" className="mt-2">
+									Done
+								</Button>
+							</ModalBody>
+						</Form>
+					</Modal>
 					{this.state.alertMessage && (
 						<Container fluid className="px-0">
 							<Alert
@@ -266,7 +357,7 @@ class Common extends React.Component {
 												<thead className="bg-light">
 													<tr>
 														<th scope="col" className="border-0">
-															ID
+															TC ID
 														</th>
 														<th scope="col" className="border-0">
 															Title

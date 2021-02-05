@@ -144,7 +144,7 @@ class Common extends React.Component {
 						</ButtonGroup>
 					</Container>
 					<Container fluid className="main-content-container px-4">
-						<MainTitle title="Project Test Cases">
+						<MainTitle title="Project Executions">
 							<Button
 								onClick={() => {
 									localStorage.removeItem('projectTestCases');
@@ -198,7 +198,7 @@ class Common extends React.Component {
 												actions={[
 													{
 														icon: 'visibility',
-														tooltip: 'User Details',
+														tooltip: 'Execute Tests',
 														onClick: (event, rowData) => {
 															this.setState({
 																redirect: true,

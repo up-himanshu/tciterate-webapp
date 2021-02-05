@@ -125,7 +125,7 @@ class Users extends React.Component {
 						</Alert>
 					</Container>
 					<Container fluid className="main-content-container px-4">
-						<MainTitle title="Users" />
+						<MainTitle title="Testers" />
 						<Row>
 							<Col>
 								<Card small className="mb-4">
@@ -141,13 +141,13 @@ class Users extends React.Component {
 												})
 											}
 										>
-											Add User
+											Add Tester
 										</Button>
 									</ContentHeader>
 									<CardBody className="p-0 pb-3">
 										<CardBody className="p-0 pb-3">
 											<MaterialTable
-												title="Users"
+												title="Testers"
 												columns={[
 													{ title: 'ID', field: 'id' },
 													{ title: 'Email', field: 'email' }
@@ -157,66 +157,7 @@ class Users extends React.Component {
 													search: true,
 													actionsColumnIndex: -1
 												}}
-												actions={[
-													{
-														icon: 'visibility',
-														tooltip: 'User Details',
-														onClick: (event, rowData) => {
-															this.setState({
-																redirect: true,
-																redirectPath: '/users/' + rowData.id,
-																redirectData: { data: rowData }
-															});
-														}
-													},
-													{
-														icon: 'edit',
-														tooltip: 'User Edit',
-														onClick: (event, rowData) => {
-															this.setState({
-																redirect: true,
-																redirectPath: '/users/' + rowData.id + '/edit',
-																redirectData: {
-																	data: rowData,
-																	id: rowData.id,
-																	update: true,
-																	first_name: rowData.first_name,
-																	last_name: rowData.last_name,
-																	email: rowData.email,
-																	city: rowData.city,
-																	country: rowData.country,
-																	state: rowData.state,
-																	phone: rowData.phone,
-																	zip_code: rowData.zip_code,
-																	address_1: rowData.address_1,
-																	role_type: rowData.role_type
-																}
-															});
-														}
-													},
-													(rowData) => ({
-														icon: rowData.status ? 'check' : 'cancel',
-														tooltip: rowData.status ? 'Activate' : 'Deactivate',
-														onClick: (event, rowData) => {
-															if (window.confirm('are you sure?')) {
-																this._handleStatus(rowData.id);
-															}
-														}
-													}),
-													{
-														icon: 'delete',
-														tooltip: 'Delete User',
-														onClick: (event, rowData) => {
-															if (
-																window.confirm(
-																	'Are you sure, you want to permanently delete this record?'
-																)
-															) {
-																this._handleDelete(rowData.id);
-															}
-														}
-													}
-												]}
+												actions={[]}
 											/>
 										</CardBody>
 									</CardBody>
