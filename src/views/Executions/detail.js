@@ -100,7 +100,7 @@ class Common extends React.Component {
 	};
 
 	markExecution(id, status) {
-		this.setState({ loading: true });
+		// this.setState({ loading: true });
 		let { actual_results } = this.state;
 		console.log(status);
 		APIService.updateExecutionResult(id, { status, actual_results }).then(

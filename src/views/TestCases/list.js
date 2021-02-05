@@ -6,7 +6,6 @@ import Loader from '../../components/Loader/Loader';
 import { Redirect } from 'react-router-dom';
 import { APIService } from '../../utils/APIService';
 import userLoginStatus from '../../utils/userLoginStatus';
-
 import MaterialTable from 'material-table';
 
 class Common extends React.Component {

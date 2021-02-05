@@ -1,6 +1,6 @@
 module.exports = {
 	url: 'localurl', // modify this setting only if explicit pointing is required.
-	baseurl: 'http://3.22.108.178:3334',
+	baseurl: 'http://3.22.108.178:3340',
 	localurl: 'http://localhost:3333',
 	ngrokurl: 'https://3da17821.ngrok.io',
 	apiKey: '6d0db711938bea9d123a5bc8afb41acc3ee3b4cd',

@@ -43,7 +43,13 @@ class Dashboard extends React.Component {
 			(stats) => {
 				this.setState({ loginStatus: true, stats: stats });
 			},
-			(error) => this.setState({ errorMessage: error })
+			(error) => {
+				if (error.errorStatus == 401) {
+					this.setState({ loginStatus: false });
+				} else {
+					this.setState({ errorMessage: error });
+				}
+			}
 		);
 	};
 

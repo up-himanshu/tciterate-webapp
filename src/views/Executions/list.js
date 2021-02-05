@@ -179,7 +179,7 @@ class Common extends React.Component {
 									<CardBody className="p-0 pb-3">
 										<CardBody className="p-0 pb-3">
 											<MaterialTable
-												title="Test Cases"
+												title="Executions"
 												columns={[
 													{ title: 'ID', field: 'id' },
 													{ title: 'Name', field: 'name' },
