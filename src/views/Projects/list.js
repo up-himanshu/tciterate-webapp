@@ -50,6 +50,7 @@ class Users extends React.Component {
 					loading: false,
 					listData: data
 				});
+				
 			},
 			(error) => this.setState({ internetConnected: false })
 		);

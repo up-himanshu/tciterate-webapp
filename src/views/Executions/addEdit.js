@@ -36,34 +36,16 @@ class AddEditUser extends React.Component {
 			internetConnected: true,
 			visible: false,
 			project_id: this.props.match.params.project_id,
-			first_name: this.props.location.state ? this.props.location.state.first_name : '',
-			last_name: this.props.location.state ? this.props.location.state.last_name : '',
-			email: this.props.location.state ? this.props.location.state.email : '',
-			password: this.props.location.state ? this.props.location.state.password : '',
-			id: this.props.location.state ? this.props.location.state.id : '',
-			update: this.props.location.state ? this.props.location.state.update : false,
-			country: this.props.location.state ? this.props.location.state.country : '',
-			state: this.props.location.state ? this.props.location.state.state : '',
-			city: this.props.location.state ? this.props.location.state.city : '',
-			phone: this.props.location.state ? this.props.location.state.phone : '',
-			zip_code: this.props.location.state ? this.props.location.state.zip_code : '',
-			address_1: this.props.location.state ? this.props.location.state.address_1 : '',
-			profile_photo: this.props.location.state ? this.props.location.state.profile_photo : '',
-			role_type: this.props.location.state ? this.props.location.state.role_type : '',
+			projectTestCases: JSON.parse(localStorage.getItem('projectTestCases')),
+			test_case_ids: [],
 			profile_change: false,
 			countries: [],
 			states: [],
 			cities: []
 		};
-		console.log(this.state);
 		this._handleChange = this._handleChange.bind(this);
-
 		this._handleSubmitAdd = this._handleSubmitAdd.bind(this);
 		this._handleSubmitUpdate = this._handleSubmitUpdate.bind(this);
-		this._handleChangeCountry = this._handleChangeCountry.bind(this);
-		this._handleChangeState = this._handleChangeState.bind(this);
-		this._handleChangeCity = this._handleChangeCity.bind(this);
-		this._handleChangeImage = this._handleChangeImage.bind(this);
 		this.dismiss = this.dismiss.bind(this);
 	}
 
@@ -71,9 +53,14 @@ class AddEditUser extends React.Component {
 		if (this.state.loginStatus === undefined) {
 			userLoginStatus().then(
 				(value) => {
+					let test_case_ids = [];
+					this.state.projectTestCases.map((tc) => {
+						test_case_ids.push(tc.id);
+					});
 					this.setState({
 						loginStatus: true,
-						loading: false
+						loading: false,
+						test_case_ids
 					});
 				},
 				(reason) => {
@@ -83,73 +70,46 @@ class AddEditUser extends React.Component {
 		}
 	}
 
-	_fetchStateData = () => {
-		const { country } = this.state;
-		APIService.fetchState(country).then(
-			(units) => {
-				this.setState({
-					states: units
-				});
-			},
-			(error) => this.setState({ internetConnected: false })
-		);
-	};
-	_fetchCityData = () => {
-		const { state } = this.state;
-		APIService.fetchCity(state).then(
-			(units) => {
-				this.setState({
-					cities: units
-				});
-			},
-			(error) => this.setState({ internetConnected: false })
-		);
-	};
-
-	_handleChange(e) {
-		const { name, value } = e.target;
-		this.setState({ [name]: value });
-	}
-
-	async _handleChangeCountry(e) {
-		// console.log(e.target.value);
-		await this.setState({ country: e.target.value });
-		this._fetchStateData();
-		// console.log(this.state);
-	}
-
-	async _handleChangeState(e) {
-		await this.setState({ state: e.target.value });
-		this._fetchCityData();
-	}
-
-	_handleChangeCity(e) {
-		this.setState({ city: e.target.value });
-	}
-
-	_handleChangeImage(e) {
-		// console.log(e.target.files[0]);
-		this.setState({ profile_photo: e.target.files[0] });
-		this.setState({ profile_change: true });
+	_handleChange(e, current, value) {
+		// const { name, value } = e.target;
+		let { test_case_ids } = this.state;
+		console.log(current, value);
+		// this.setState({ [name]: value });
+		if (current) {
+			test_case_ids = test_case_ids.filter((item) => item !== value);
+			this.setState({ test_case_ids });
+		} else {
+			test_case_ids.push(value);
+			this.setState({ test_case_ids });
+		}
 	}
 
 	_handleSubmitAdd(e) {
 		e.preventDefault();
+		let { name, test_case_ids, project_id } = this.state;
+		if (!name) {
+			alert('Please fill name.');
+			return;
+		}
+		if (!test_case_ids.length) {
+			alert('You need to select at least one test case.');
+			return;
+		}
 		this.setState({ loading: true });
 		// const { firstName, lastName } = this.state;
-		console.log('this.state.project_id', this.state.project_id);
-		APIService.addProjectTestCase(this.state.project_id, this.state).then(
+		console.log('this.state.test_case_ids', this.state.test_case_ids);
+		APIService.addProjectExecution(project_id, { name, test_case_ids }).then(
 			(unit) => {
 				this.setState({
 					success: true,
 					loading: false,
 					redirect: true,
-					redirectPath: '/projects/' + this.state.project_id + '/testcases',
+					redirectPath: '/projects/' + this.state.project_id + '/executions',
 					redirectData: {
 						visible: true,
 						alertStyle: 'success',
 						alertIcon: 'fa fa-check mx-2',
-						alertMessage: 'Test Case added successfully.'
+						alertMessage: 'Execution added successfully.'
 					}
 				});
 			},
@@ -204,29 +164,25 @@ class AddEditUser extends React.Component {
 	dismiss() {
 		this.setState({ visible: false });
 	}
-	renderCountry = (Obj, i) => {
+
+	_renderItems(item) {
+		let { test_case_ids } = this.state;
 		return (
-			<option value={Obj.id} key={i} selected={this.state.country === Obj.id ? true : false}>
-				{Obj.name}
-			</option>
+			<Col md={{ size: 12 }} className="ml-2" key={item.id.toString()}>
+				<FormCheckbox
+					id="fc1"
+					checked={test_case_ids.includes(item.id)}
+					onChange={(e) => this._handleChange(e, test_case_ids.includes(item.id), item.id)}
+				>
+					{item.title}
+				</FormCheckbox>
+			</Col>
 		);
-	};
-	renderState = (Obj, i) => {
-		return (
-			<option value={Obj.id} key={i} selected={this.state.state === Obj.id ? true : false}>
-				{Obj.name}
-			</option>
-		);
-	};
-	renderCity = (Obj, i) => {
-		return (
-			<option value={Obj.id} key={i} selected={this.state.city === Obj.id ? true : false}>
-				{Obj.name}
-			</option>
-		);
-	};
+	}
 
 	_renderForm() {
+		this._renderItems = this._renderItems.bind(this);
+		let tableRows = this.state.projectTestCases.map(this._renderItems);
 		return (
 			<Form onSubmit={this.state.update ? this._handleSubmitUpdate : this._handleSubmitAdd}>
 				<Row form>
@@ -247,6 +203,13 @@ class AddEditUser extends React.Component {
 				</Row>
 
 				<Row form>
+					<Col md={{ size: 12 }} className="ml-2 pb-3">
+						<strong>Select Test Cases</strong>
+					</Col>
+					{tableRows}
+				</Row>
+
+				<Row form>
 					<Col sm={{ size: 6, order: 6, offset: 5 }}>
 						{this.state.update ? (
 							<Button type="submit">Update Execution</Button>
@@ -260,10 +223,7 @@ class AddEditUser extends React.Component {
 	}
 
 	render() {
-		const { loginStatus, loading, internetConnected } = this.state;
-		this.renderCountry = this.renderCountry.bind(this);
-		this.renderState = this.renderState.bind(this);
-		this.renderCity = this.renderCity.bind(this);
+		const { loginStatus, loading, internetConnected, project_id } = this.state;
 		if (this.state.redirect) {
 			return (
 				<Redirect
@@ -313,7 +273,7 @@ class AddEditUser extends React.Component {
 												) {
 													this.setState({
 														redirect: true,
-														redirectPath: '/users'
+														redirectPath: '/projects/' + project_id + '/executions'
 													});
 												}
 											}}

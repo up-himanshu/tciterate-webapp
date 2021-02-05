@@ -115,6 +115,18 @@ class Common extends React.Component {
 		} else if (loginStatus) {
 			return (
 				<div>
+					<Container fluid className="px-0">
+						{this.state.alertMessage && (
+							<Alert
+								theme={this.state.alertStyle || 'primary'}
+								dismissible={this.dismiss}
+								open={this.state.visible}
+								className="mb-0"
+							>
+								<i className={this.state.alertIcon} /> {this.state.alertMessage}
+							</Alert>
+						)}
+					</Container>
 					<Container fluid className="px-4 py-4">
 						<ButtonGroup className="mb-3">
 							<Button
@@ -131,27 +143,16 @@ class Common extends React.Component {
 							<Button theme="primary">Executions</Button>
 						</ButtonGroup>
 					</Container>
-					<Container fluid className="px-0">
-						{this.state.alertMessage && (
-							<Alert
-								theme={this.state.alertStyle || 'primary'}
-								dismissible={this.dismiss}
-								open={this.state.visible}
-								className="mb-0"
-							>
-								<i className={this.state.alertIcon} /> {this.state.alertMessage}
-							</Alert>
-						)}
-					</Container>
 					<Container fluid className="main-content-container px-4">
 						<MainTitle title="Project Test Cases">
 							<Button
-								onClick={() =>
+								onClick={() => {
+									localStorage.removeItem('projectTestCases');
 									this.setState({
 										redirect: true,
 										redirectPath: '/projects'
-									})
-								}
+									});
+								}}
 							>
 								Change Project
 							</Button>

@@ -35,34 +35,13 @@ class AddEditUser extends React.Component {
 			internetConnected: true,
 			visible: false,
 			project_id: this.props.match.params.project_id,
-			first_name: this.props.location.state ? this.props.location.state.first_name : '',
-			last_name: this.props.location.state ? this.props.location.state.last_name : '',
-			email: this.props.location.state ? this.props.location.state.email : '',
-			password: this.props.location.state ? this.props.location.state.password : '',
-			id: this.props.location.state ? this.props.location.state.id : '',
-			update: this.props.location.state ? this.props.location.state.update : false,
-			country: this.props.location.state ? this.props.location.state.country : '',
-			state: this.props.location.state ? this.props.location.state.state : '',
-			city: this.props.location.state ? this.props.location.state.city : '',
-			phone: this.props.location.state ? this.props.location.state.phone : '',
-			zip_code: this.props.location.state ? this.props.location.state.zip_code : '',
-			address_1: this.props.location.state ? this.props.location.state.address_1 : '',
-			profile_photo: this.props.location.state ? this.props.location.state.profile_photo : '',
-			role_type: this.props.location.state ? this.props.location.state.role_type : '',
 			profile_change: false,
 			countries: [],
 			states: [],
 			cities: []
 		};
-		console.log(this.state);
-		this._handleChange = this._handleChange.bind(this);
-
 		this._handleSubmitAdd = this._handleSubmitAdd.bind(this);
 		this._handleSubmitUpdate = this._handleSubmitUpdate.bind(this);
-		this._handleChangeCountry = this._handleChangeCountry.bind(this);
-		this._handleChangeState = this._handleChangeState.bind(this);
-		this._handleChangeCity = this._handleChangeCity.bind(this);
-		this._handleChangeImage = this._handleChangeImage.bind(this);
 		this.dismiss = this.dismiss.bind(this);
 	}
 
@@ -104,33 +83,6 @@ class AddEditUser extends React.Component {
 			(error) => this.setState({ internetConnected: false })
 		);
 	};
-
-	_handleChange(e) {
-		const { name, value } = e.target;
-		this.setState({ [name]: value });
-	}
-
-	async _handleChangeCountry(e) {
-		// console.log(e.target.value);
-		await this.setState({ country: e.target.value });
-		this._fetchStateData();
-		// console.log(this.state);
-	}
-
-	async _handleChangeState(e) {
-		await this.setState({ state: e.target.value });
-		this._fetchCityData();
-	}
-
-	_handleChangeCity(e) {
-		this.setState({ city: e.target.value });
-	}
-
-	_handleChangeImage(e) {
-		// console.log(e.target.files[0]);
-		this.setState({ profile_photo: e.target.files[0] });
-		this.setState({ profile_change: true });
-	}
 
 	_handleSubmitAdd(e) {
 		e.preventDefault();
@@ -203,27 +155,6 @@ class AddEditUser extends React.Component {
 	dismiss() {
 		this.setState({ visible: false });
 	}
-	renderCountry = (Obj, i) => {
-		return (
-			<option value={Obj.id} key={i} selected={this.state.country === Obj.id ? true : false}>
-				{Obj.name}
-			</option>
-		);
-	};
-	renderState = (Obj, i) => {
-		return (
-			<option value={Obj.id} key={i} selected={this.state.state === Obj.id ? true : false}>
-				{Obj.name}
-			</option>
-		);
-	};
-	renderCity = (Obj, i) => {
-		return (
-			<option value={Obj.id} key={i} selected={this.state.city === Obj.id ? true : false}>
-				{Obj.name}
-			</option>
-		);
-	};
 
 	_renderForm() {
 		return (
@@ -290,10 +221,7 @@ class AddEditUser extends React.Component {
 	}
 
 	render() {
-		const { loginStatus, loading, internetConnected } = this.state;
-		this.renderCountry = this.renderCountry.bind(this);
-		this.renderState = this.renderState.bind(this);
-		this.renderCity = this.renderCity.bind(this);
+		const { loginStatus, loading, internetConnected, project_id } = this.state;
 		if (this.state.redirect) {
 			return (
 				<Redirect
@@ -343,7 +271,7 @@ class AddEditUser extends React.Component {
 												) {
 													this.setState({
 														redirect: true,
-														redirectPath: '/users'
+														redirectPath: '/projects/' + project_id + '/testcases'
 													});
 												}
 											}}

@@ -44,13 +44,14 @@ class Common extends React.Component {
 
 	_fetchListData = () => {
 		APIService.fetchProjectTestCases(this.state.project_id).then(
-			(units) => {
+			(data) => {
 				this.setState({
 					loginStatus: true,
 					listItems: true,
 					loading: false,
-					listData: units
+					listData: data
 				});
+				localStorage.setItem('projectTestCases', JSON.stringify(data));
 			},
 			(error) => this.setState({ internetConnected: false })
 		);
@@ -146,12 +147,13 @@ class Common extends React.Component {
 					<Container fluid className="main-content-container px-4">
 						<MainTitle title="Project Test Cases">
 							<Button
-								onClick={() =>
+								onClick={() => {
+									localStorage.removeItem('projectTestCases');
 									this.setState({
 										redirect: true,
 										redirectPath: '/projects'
-									})
-								}
+									});
+								}}
 							>
 								Change Project
 							</Button>
