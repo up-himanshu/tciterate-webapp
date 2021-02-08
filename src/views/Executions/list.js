@@ -56,38 +56,6 @@ class Common extends React.Component {
 		);
 	};
 
-	_handleDelete(id) {
-		APIService.deleteProjectTestCase(id).then(
-			() => {
-				this.setState({
-					listItems: true,
-					loading: false
-				});
-				this._fetchListData();
-			},
-			(error) => {
-				alert(error.errorMessage);
-				this.setState({ loading: false, alertVisible: true });
-			}
-		);
-	}
-
-	_handleStatus(id) {
-		APIService.statusUser(id).then(
-			() => {
-				this.setState({
-					listItems: true,
-					loading: false
-				});
-				this._fetchListData();
-			},
-			(error) => {
-				alert(error.errorMessage);
-				this.setState({ loading: false, alertVisible: true });
-			}
-		);
-	}
-
 	dismiss() {
 		this.setState({ visible: false });
 	}
@@ -193,6 +161,8 @@ class Common extends React.Component {
 												data={this.state.listData}
 												options={{
 													search: true,
+													pageSize: 50,
+													pageSizeOptions: [50, 100, 200],
 													actionsColumnIndex: -1
 												}}
 												actions={[

@@ -45,6 +45,7 @@ class Dashboard extends React.Component {
 			},
 			(error) => {
 				if (error.errorStatus == 401) {
+					APIService.logout();
 					this.setState({ loginStatus: false });
 				} else {
 					this.setState({ errorMessage: error });
@@ -71,7 +72,7 @@ class Dashboard extends React.Component {
 				<Container fluid className="main-content-container px-4">
 					{/* Page Header */}
 					<Row noGutters className="page-header py-4">
-						<PageTitle title="Dashboard" subtitle="Ornat" className="text-sm-left mb-3" />
+						<PageTitle title="Dashboard" subtitle="TCIterate" className="text-sm-left mb-3" />
 					</Row>
 
 					{/* Small Stats Blocks */}

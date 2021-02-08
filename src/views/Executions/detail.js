@@ -86,23 +86,15 @@ class Common extends React.Component {
 
 	handleClick = (e, id, status) => {
 		e.preventDefault();
-		let { failingTCId } = this.state;
 		if (status === 'passed' || status === 'unexecuted') {
 			this.markExecution(id, status);
 		} else {
-			console.log(failingTCId);
-			// if (status == 'blocked') {
-			// 	this.setState({ actual_results: 'Blocked as testcase #' + failingTCId + 'failed.' });
-			// }
 			this.markExecution(id, status);
-			//show popup for actual_results
 		}
 	};
 
 	markExecution(id, status) {
-		// this.setState({ loading: true });
 		let { actual_results } = this.state;
-		console.log(status);
 		APIService.updateExecutionResult(id, { status, actual_results }).then(
 			(data) => {
 				this._fetchListData();

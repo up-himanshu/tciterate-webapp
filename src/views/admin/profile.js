@@ -29,16 +29,15 @@ class AdminProfile extends React.Component {
 			success: false,
 			redirect: false,
 			loading: false,
-			listItems: false,
 			internetConnected: true,
 			visible: false,
-			name: this.props.location.state ? this.props.location.state.name : '',
-			id: this.props.location.state ? this.props.location.state.id : '',
-			update: this.props.location.state ? this.props.location.state.update : false
+			userData: JSON.parse(localStorage.getItem('user')),
+			email: '',
+			password: '',
+			id: this.props.location.state ? this.props.location.state.id : ''
 		};
 
 		this._handleChange = this._handleChange.bind(this);
-		this._handleSubmitAdd = this._handleSubmitAdd.bind(this);
 		this._handleSubmitUpdate = this._handleSubmitUpdate.bind(this);
 		this.dismiss = this.dismiss.bind(this);
 	}
@@ -48,6 +47,7 @@ class AdminProfile extends React.Component {
 			userLoginStatus().then(
 				(value) => {
 					this.setState({
+						email: this.state.userData.email,
 						loginStatus: true,
 						loading: false
 					});
@@ -64,58 +64,21 @@ class AdminProfile extends React.Component {
 		this.setState({ [name]: value });
 	}
 
-	_handleSubmitAdd(e) {
-		e.preventDefault();
-		this.setState({ loading: true });
-		const { name } = this.state;
-		APIService.addCategory({
-			name
-		}).then(
-			(unit) => {
-				this.setState({
-					success: true,
-					loading: false,
-					redirect: true,
-					redirectPath: '/profile',
-					redirectData: {
-						visible: true,
-						alertStyle: 'success',
-						alertIcon: 'fa fa-check mx-2',
-						alertMessage: 'Profile updated successfully.'
-					}
-				});
-			},
-			(error) => {
-				// alert(JSON.stringify(error, null, 2));
-				this.setState({
-					success: false,
-					loading: false,
-					visible: true,
-					alertStyle: 'danger',
-					alertIcon: 'fa fa-exclamation mx-2',
-					alertMessage: error.errorMessage
-				});
-			}
-		);
-	}
-
 	_handleSubmitUpdate(e) {
 		e.preventDefault();
 		//const id = this.state.id;
 		// console.log(name);
-		APIService.adminProfile().then(
-			(unit) => {
+		APIService.updateUserProfile({ password: this.state.password }).then(
+			(data) => {
 				this.setState({
 					success: true,
 					loading: false,
-					redirect: true,
-					redirectPath: '/profile',
-					redirectData: {
-						visible: true,
-						alertStyle: 'success',
-						alertIcon: 'fa fa-check mx-2',
-						alertMessage: 'Profile updated successfully.'
-					}
+					redirect: false,
+					visible: true,
+					alertStyle: 'success',
+					password: '',
+					alertIcon: 'fa fa-check mx-2',
+					alertMessage: 'Profile updated successfully.'
 				});
 			},
 
@@ -140,29 +103,39 @@ class AdminProfile extends React.Component {
 
 	_renderForm() {
 		return (
-			<Form onSubmit={this.state.update ? this._handleSubmitUpdate : this._handleSubmitAdd}>
+			<Form onSubmit={this._handleSubmitUpdate}>
 				<Row className="py-5 px-4">
 					<Col md="7">
 						<Row form>
-							<Col md="12" className="form-group">
+							{/* <Col md="12" className="form-group">
 								<label htmlFor="feInputName" className="mb-1">
 									Name
 								</label>
 								<FormInput id="feInputName" />
-							</Col>
+							</Col> */}
 
 							<Col md="12" className="form-group">
 								<label htmlFor="feInputEmail" className="mb-1">
 									Email
 								</label>
-								<FormInput id="feInputEmail" />
+								<FormInput id="feInputEmail" value={this.state.email} disabled />
 							</Col>
 
 							<Col md="12" className="form-group">
-								<label htmlFor="feInputPassword" className="mb-1">
+								<label htmlFor="fePassword" className="mb-1">
 									Password
 								</label>
-								<FormInput id="feInputPassword" />
+								<FormInput
+									id="fePassword"
+									type="password	"
+									placeholder="Enter new password"
+									name="password"
+									onChange={(e) => {
+										this.setState({ password: e.target.value });
+										this.value = this.state.password;
+									}}
+									value={this.state.password}
+								/>
 							</Col>
 						</Row>
 					</Col>
@@ -170,11 +143,7 @@ class AdminProfile extends React.Component {
 
 				<Row form>
 					<Col md="4" sm={{ size: 6, order: 6, offset: 5 }}>
-						{this.state.update ? (
-							<Button type="submit">Update</Button>
-						) : (
-							<Button type="submit">Update Profile</Button>
-						)}
+						<Button type="submit">Update Profile</Button>
 					</Col>
 				</Row>
 			</Form>
@@ -227,11 +196,11 @@ class AdminProfile extends React.Component {
 											onClick={() =>
 												this.setState({
 													redirect: true,
-													redirectPath: '/profile'
+													redirectPath: '/dashboard'
 												})
 											}
 										>
-											Back
+											Exit
 										</Button>
 									</ContentHeader>
 									<CardBody className="p-0 pb-3">{this._renderForm()}</CardBody>

@@ -8,6 +8,7 @@ export const APIService = {
 	logout,
 	fetchAllUsers,
 	addUser,
+	updateUserProfile,
 	fetchAllProjects,
 	addProject,
 	fetchProjectTestCases,
@@ -56,7 +57,7 @@ function logout() {
 		method: 'DELETE',
 		headers: authHeader()
 	};
-	return fetch(baseUrl + config.endpoints.users, requestOptions)
+	return fetch(baseUrl + config.endpoints.users + 'logout', requestOptions)
 		.then(_handleResponse)
 		.then((user) => {
 			localStorage.removeItem('user');
@@ -85,6 +86,19 @@ function addUser(body) {
 		body: JSON.stringify(body)
 	};
 	return fetch(baseUrl + config.endpoints.users, requestOptions)
+		.then(_handleResponse)
+		.then((user) => {
+			return user;
+		});
+}
+
+function updateUserProfile(body) {
+	const requestOptions = {
+		method: 'PUT',
+		headers: authHeader(),
+		body: JSON.stringify(body)
+	};
+	return fetch(baseUrl + config.endpoints.users + 'profile', requestOptions)
 		.then(_handleResponse)
 		.then((user) => {
 			return user;
@@ -236,12 +250,11 @@ function dashboardStats() {
 function _handleResponse(response) {
 	return response.text().then((text) => {
 		let data = text && JSON.parse(text);
-		console.log('_handleResponse', text);
 		data.statusText = response.statusText;
 		if (!response.ok) {
 			if (response.status === 401) {
 				// console.log(response);
-				// logout();
+				logout();
 				// if (new URL(response.url).pathname !== "/api/dashboard/admins/login") {
 				//   window.location.reload(true);
 				// }

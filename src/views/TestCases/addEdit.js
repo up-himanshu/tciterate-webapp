@@ -35,6 +35,8 @@ class AddEditUser extends React.Component {
 			internetConnected: true,
 			visible: false,
 			project_id: this.props.match.params.project_id,
+			update: this.props.location.state ? this.props.location.state.update : false,
+			title: this.props.location.state ? this.props.location.state.title : '',
 			profile_change: false,
 			countries: [],
 			states: [],

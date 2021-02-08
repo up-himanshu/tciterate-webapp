@@ -73,13 +73,13 @@ class LoginContainer extends React.Component {
 	}
 
 	render() {
-		const { username, password, loading, error } = this.state;
+		const { username, password, loading, error, loginStatus } = this.state;
 		if (loading) {
 			return <Loader />;
 		}
-		if (this.state.loginStatus === undefined) {
+		if (loginStatus === undefined) {
 			return <div>default UI</div>;
-		} else if (this.state.loginStatus) {
+		} else if (loginStatus) {
 			return <Redirect to="/dashboard" />;
 		} else {
 			return (

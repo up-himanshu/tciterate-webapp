@@ -59,6 +59,7 @@ class Common extends React.Component {
 	_handleDelete(id) {
 		APIService.deleteProjectTestCase(id).then(
 			() => {
+				alert('success');
 				this.setState({
 					listItems: true,
 					loading: false
@@ -66,24 +67,14 @@ class Common extends React.Component {
 				this._fetchListData();
 			},
 			(error) => {
-				alert(error.errorMessage);
-				this.setState({ loading: false, alertVisible: true });
-			}
-		);
-	}
-
-	_handleStatus(id) {
-		APIService.statusUser(id).then(
-			() => {
 				this.setState({
-					listItems: true,
-					loading: false
+					loading: false,
+					visible: true,
+					alertStyle: 'danger',
+					alertIcon: 'fa fa-exclamation mx-2',
+					alertMessage: error.errorMessage
 				});
-				this._fetchListData();
-			},
-			(error) => {
-				alert(error.errorMessage);
-				this.setState({ loading: false, alertVisible: true });
+				window.scrollTo(0, 0);
 			}
 		);
 	}
@@ -190,6 +181,8 @@ class Common extends React.Component {
 												data={this.state.listData}
 												options={{
 													search: true,
+													pageSize: 50,
+													pageSizeOptions: [50, 100, 200],
 													actionsColumnIndex: -1
 												}}
 												actions={[
@@ -204,16 +197,9 @@ class Common extends React.Component {
 													// 				data: rowData,
 													// 				id: rowData.id,
 													// 				update: true,
-													// 				first_name: rowData.first_name,
-													// 				last_name: rowData.last_name,
-													// 				email: rowData.email,
-													// 				city: rowData.city,
-													// 				country: rowData.country,
-													// 				state: rowData.state,
-													// 				phone: rowData.phone,
-													// 				zip_code: rowData.zip_code,
-													// 				address_1: rowData.address_1,
-													// 				role_type: rowData.role_type
+													// 				title: rowData.title,
+													// 				description: rowData.description,
+													// 				expected_results: rowData.expected_results
 													// 			}
 													// 		});
 													// 	}

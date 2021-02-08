@@ -96,7 +96,7 @@ export default [
 	},
 
 	{
-		path: '/admin',
+		path: '/profile',
 		layout: DefaultLayout,
 		component: AdminProfile
 	},

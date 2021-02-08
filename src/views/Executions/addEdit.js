@@ -73,7 +73,6 @@ class AddEditUser extends React.Component {
 	_handleChange(e, current, value) {
 		// const { name, value } = e.target;
 		let { test_case_ids } = this.state;
-		console.log(current, value);
 		// this.setState({ [name]: value });
 		if (current) {
 			test_case_ids = test_case_ids.filter((item) => item !== value);
@@ -97,7 +96,6 @@ class AddEditUser extends React.Component {
 		}
 		this.setState({ loading: true });
 		// const { firstName, lastName } = this.state;
-		console.log('this.state.test_case_ids', this.state.test_case_ids);
 		APIService.addProjectExecution(project_id, { name, test_case_ids }).then(
 			(unit) => {
 				this.setState({
