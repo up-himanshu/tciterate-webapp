@@ -1,5 +1,5 @@
 module.exports = {
-	url: 'localurl', // modify this setting only if explicit pointing is required.
+	url: 'baseurl', // modify this setting only if explicit pointing is required.
 	baseurl: 'http://tcms.arkasoftwares.co',
 	localurl: 'http://localhost:3333',
 	ngrokurl: 'https://3da17821.ngrok.io',
