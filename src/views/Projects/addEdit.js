@@ -294,11 +294,11 @@ class AddEditUser extends React.Component {
 						</Alert>
 					</Container>
 					<Container fluid className="main-content-container px-4">
-						<MainTitle title="Customers" />
+						<MainTitle title="Projects" />
 						<Row>
 							<Col>
 								<Card small className="mb-4">
-									<ContentHeader title={this.state.update ? 'Edit Customer' : 'Add Customer'}>
+									<ContentHeader title={this.state.update ? 'Edit Project' : 'Add Project'}>
 										<Button
 											outline
 											theme="primary"
@@ -311,7 +311,7 @@ class AddEditUser extends React.Component {
 												) {
 													this.setState({
 														redirect: true,
-														redirectPath: '/users'
+														redirectPath: '/projects'
 													});
 												}
 											}}
