@@ -84,7 +84,7 @@ class Common extends React.Component {
 	}
 
 	render() {
-		const { loginStatus, loading, internetConnected } = this.state;
+		const { loginStatus, loading, internetConnected, project_id } = this.state;
 		if (this.state.redirect) {
 			return (
 				<Redirect
@@ -126,7 +126,7 @@ class Common extends React.Component {
 								onClick={() =>
 									this.setState({
 										redirect: true,
-										redirectPath: '/projects/' + this.state.project_id + '/executions'
+										redirectPath: '/projects/' + project_id + '/executions'
 									})
 								}
 							>
@@ -160,8 +160,7 @@ class Common extends React.Component {
 											onClick={() =>
 												this.setState({
 													redirect: true,
-													redirectPath:
-														'/projects/' + this.state.project_id + '/testcases/new'
+													redirectPath: '/projects/' + project_id + '/testcases/new'
 												})
 											}
 										>
@@ -186,24 +185,29 @@ class Common extends React.Component {
 													actionsColumnIndex: -1
 												}}
 												actions={[
-													// {
-													// 	icon: 'edit',
-													// 	tooltip: 'User Edit',
-													// 	onClick: (event, rowData) => {
-													// 		this.setState({
-													// 			redirect: true,
-													// 			redirectPath: '/projects/' + rowData.id + '/edit',
-													// 			redirectData: {
-													// 				data: rowData,
-													// 				id: rowData.id,
-													// 				update: true,
-													// 				title: rowData.title,
-													// 				description: rowData.description,
-													// 				expected_results: rowData.expected_results
-													// 			}
-													// 		});
-													// 	}
-													// },
+													{
+														icon: 'edit',
+														tooltip: 'User Edit',
+														onClick: (event, rowData) => {
+															this.setState({
+																redirect: true,
+																redirectPath:
+																	'/projects/' +
+																	project_id +
+																	'/testcases/' +
+																	rowData.id +
+																	'/edit',
+																redirectData: {
+																	data: rowData,
+																	id: rowData.id,
+																	update: true,
+																	title: rowData.title,
+																	description: rowData.description,
+																	expected_results: rowData.expected_results
+																}
+															});
+														}
+													},
 													{
 														icon: 'delete',
 														tooltip: 'Delete Testcase',

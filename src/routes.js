@@ -77,6 +77,12 @@ export default [
 		component: AddTestCase
 	},
 	{
+		path: '/projects/:project_id/testcases/:id/edit',
+		exact: true,
+		layout: DefaultLayout,
+		component: AddTestCase
+	},
+	{
 		path: '/projects/:project_id/executions',
 		exact: true,
 		layout: DefaultLayout,

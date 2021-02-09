@@ -36,7 +36,10 @@ class AddEditUser extends React.Component {
 			visible: false,
 			project_id: this.props.match.params.project_id,
 			update: this.props.location.state ? this.props.location.state.update : false,
+			id: this.props.location.state ? this.props.location.state.id : '',
 			title: this.props.location.state ? this.props.location.state.title : '',
+			description: this.props.location.state ? this.props.location.state.description : '',
+			expected_results: this.props.location.state ? this.props.location.state.expected_results : '',
 			profile_change: false,
 			countries: [],
 			states: [],
@@ -62,29 +65,6 @@ class AddEditUser extends React.Component {
 			);
 		}
 	}
-
-	_fetchStateData = () => {
-		const { country } = this.state;
-		APIService.fetchState(country).then(
-			(units) => {
-				this.setState({
-					states: units
-				});
-			},
-			(error) => this.setState({ internetConnected: false })
-		);
-	};
-	_fetchCityData = () => {
-		const { state } = this.state;
-		APIService.fetchCity(state).then(
-			(units) => {
-				this.setState({
-					cities: units
-				});
-			},
-			(error) => this.setState({ internetConnected: false })
-		);
-	};
 
 	_handleSubmitAdd(e) {
 		e.preventDefault();
@@ -121,21 +101,19 @@ class AddEditUser extends React.Component {
 
 	_handleSubmitUpdate(e) {
 		e.preventDefault();
-		// const { name } = this.state;
-		const id = this.state.id;
-		// console.log(name);
-		APIService.updateUser(id, this.state).then(
+		let { id, title, description, expected_results } = this.state;
+		APIService.updateProjectTestCase(id, { title, description, expected_results }).then(
 			(unit) => {
 				this.setState({
 					success: true,
 					loading: false,
 					redirect: true,
-					redirectPath: '/users',
+					redirectPath: '/projects/' + this.state.project_id + '/testcases',
 					redirectData: {
 						visible: true,
 						alertStyle: 'success',
 						alertIcon: 'fa fa-check mx-2',
-						alertMessage: 'User updated successfully.'
+						alertMessage: 'Test case updated successfully.'
 					}
 				});
 			},
