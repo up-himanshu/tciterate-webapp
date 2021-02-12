@@ -3,7 +3,6 @@ module.exports = {
 	baseurl: 'http://tcms.arkasoftwares.co',
 	localurl: 'http://localhost:3333',
 	ngrokurl: 'https://3da17821.ngrok.io',
-	apiKey: '6d0db711938bea9d123a5bc8afb41acc3ee3b4cd',
 	contentType: 'application/json',
 	accept: 'application/json',
 	endpoints: {

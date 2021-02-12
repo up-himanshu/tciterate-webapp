@@ -5,7 +5,6 @@ export function authHeaderStore() {
 
 	if (user && user.auth_data) {
 		return {
-			api_key: config.apiKey,
 			Authorization: 'Basic ' + user.auth_data
 		};
 	} else {

@@ -50,7 +50,6 @@ class Users extends React.Component {
 					loading: false,
 					listData: data
 				});
-				
 			},
 			(error) => this.setState({ internetConnected: false })
 		);
@@ -151,7 +150,9 @@ class Users extends React.Component {
 												title="Projects"
 												columns={[
 													{ title: 'ID', field: 'id' },
-													{ title: 'Name', field: 'name' }
+													{ title: 'Name', field: 'name' },
+													{ title: 'Test Cases', field: '__meta__.test_cases_count' },
+													{ title: 'Executions', field: '__meta__.executions_count' }
 												]}
 												data={this.state.listData}
 												options={{

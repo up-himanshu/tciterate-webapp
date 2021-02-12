@@ -43,12 +43,12 @@ class Users extends React.Component {
 
 	_fetchListData = () => {
 		APIService.fetchAllUsers().then(
-			(units) => {
+			(data) => {
 				this.setState({
 					loginStatus: true,
 					listItems: true,
 					loading: false,
-					unitData: units
+					unitData: data
 				});
 			},
 			(error) => this.setState({ internetConnected: false })
@@ -150,7 +150,13 @@ class Users extends React.Component {
 												title="Testers"
 												columns={[
 													{ title: 'ID', field: 'id' },
-													{ title: 'Email', field: 'email' }
+													{ title: 'Email', field: 'email' },
+													{ title: 'Test Cases', field: '__meta__.test_cases_count' },
+													{ title: 'Executions', field: '__meta__.executions_count' },
+													{
+														title: 'Executed Test Cases',
+														field: '__meta__.execution_results_count'
+													}
 												]}
 												data={this.state.unitData}
 												options={{
