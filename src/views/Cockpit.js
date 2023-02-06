@@ -138,7 +138,7 @@ class Cockpit extends React.Component {
       return <Loader />;
     } else if (loginStatus) {
       return (
-        <Container fluid className="main-content-container px-4">
+        <Container fluid className="main-content-container px-4"> 
           {/* Page Header with Add button */}
           <Row>
             <Col>
