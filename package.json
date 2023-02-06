@@ -31,7 +31,7 @@
     "shortid": "^2.2.14"
   },
   "scripts": {
-		"start": "react-scripts --openssl-legacy-provider start",
+		"start": "react-scripts start --openssl-legacy-provider",
 		"build:prod": "cross-env REACT_APP_BASENAME=/ REACT_APP_GAID=UA-115105611-1 NODE_ENV=production npm run build",
 		"build:move": "sudo rm -rf ../tciterate-server/resources/views/index.edge; sudo rm -rf ../tciterate-server/public/*; cd build/; sudo cp -R . ../../tciterate-server/public/; cd ../../tciterate-server/public/; sudo mv index.html ../resources/views/index.edge",
 		"build": "cross-env REACT_APP_BASENAME=/ react-scripts build",
