@@ -83,11 +83,11 @@ class UserDetails extends React.Component {
 						</Alert>
 					</Container>
 					<Container fluid className="main-content-container px-4">
-						<MainTitle title="Customer" />
+						<MainTitle title="Testers" />
 						<Row>
 							<Col>
 								<Card small className="mb-4">
-									<ContentHeader title="Customer Details">
+									<ContentHeader title="Tester Details">
 										<Button
 											outline
 											theme="primary"

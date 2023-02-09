@@ -12,7 +12,7 @@ import {
   FormInput,
   FormSelect,
   FormTextarea,
-  Button
+  Button,
 } from "shards-react";
 
 const UserAccountDetails = ({ title }) => (
@@ -130,11 +130,11 @@ UserAccountDetails.propTypes = {
   /**
    * The component's title.
    */
-  title: PropTypes.string
+  title: PropTypes.string,
 };
 
 UserAccountDetails.defaultProps = {
-  title: "Account Details"
+  title: "Account Details",
 };
 
 export default UserAccountDetails;

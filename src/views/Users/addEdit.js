@@ -307,11 +307,11 @@ class AddEditUser extends React.Component {
 						</Alert>
 					</Container>
 					<Container fluid className="main-content-container px-4">
-						<MainTitle title="Customers" />
+						<MainTitle title="Testers" />
 						<Row>
 							<Col>
 								<Card small className="mb-4">
-									<ContentHeader title={this.state.update ? 'Edit Customer' : 'Add Customer'}>
+									<ContentHeader title={this.state.update ? 'Edit Tester' : 'Add Tester'}>
 										<Button
 											outline
 											theme="primary"

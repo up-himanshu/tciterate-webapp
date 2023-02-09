@@ -1,10 +1,10 @@
-import React from 'react';
-import { Container, Row, Col, Form, FormInput, Button } from 'shards-react';
+import React from "react";
+import { Container, Row, Col, Form, FormInput, Button } from "shards-react";
 
 class LoginForm extends React.Component {
-  state = { email: '', password: '' };
+  state = { email: "", password: "" };
 
-  loginSubmit = e => {
+  loginSubmit = (e) => {
     e.preventDefault();
     const { email, password } = this.state;
     this.props.onSubmit(email, password);
@@ -25,7 +25,7 @@ class LoginForm extends React.Component {
                     placeholder="Email"
                     name="email"
                     value={this.state.email}
-                    onChange={e => this.setState({ email: e.target.value })}
+                    onChange={(e) => this.setState({ email: e.target.value })}
                   />
                 </Col>
               </Row>
@@ -39,7 +39,9 @@ class LoginForm extends React.Component {
                     placeholder="Password"
                     name="password"
                     value={this.state.Password}
-                    onChange={e => this.setState({ password: e.target.value })}
+                    onChange={(e) =>
+                      this.setState({ password: e.target.value })
+                    }
                   />
                 </Col>
               </Row>
